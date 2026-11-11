@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formularz komunikacyjny – Sezon Francja–Polska 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;800&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--brown:#3b1a1a;--red:#ff4426;--green:#1ce14a;--blue:#4586ff;--bg:#f4efe9;--line:#d9cdc2;--err:#c4331c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:'Fira Sans',system-ui,sans-serif;color:var(--brown);-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.5}
+a{color:var(--brown)}a:hover{color:var(--red)}
+a.mail{font-weight:700;text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+a.mail:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:2px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 32px}
+.top{background:#fff;border-bottom:1px solid var(--line)}
+.top-in{height:96px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.wordmark{font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:28px;line-height:1;color:var(--red)}
+.top img{height:64px;width:auto;display:block}
+.draft{font-size:14px;color:var(--brown)}
+.hero{padding:56px 0 40px}
+.hero h1{margin:0;font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:64px;line-height:.95;letter-spacing:-.01em;max-width:820px}
+.hero p{margin:14px 0 0;font-size:19px}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:48px;align-items:start;padding-bottom:96px}
+.steps{position:sticky;top:24px;display:flex;flex-direction:column;gap:4px}
+.step{display:flex;gap:12px;align-items:center;background:none;border:0;padding:10px 12px;border-radius:12px;font:inherit;font-size:15px;color:var(--brown);text-align:left;cursor:pointer}
+.step:hover{background:#fff}
+.step{align-items:flex-start!important;line-height:1.35}
+.step .tx{padding-top:4px}
+.step .dot{display:block;width:8px;height:8px;border-radius:50%;background:currentColor}
+.step .n{width:28px;height:28px;flex:none;border-radius:50%;border:2px solid var(--brown);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#fff}
+.miss-note{font-size:15px;color:#6b4b44;text-align:right;margin:20px 0 -16px}
+.miss-note:empty{display:none}
+.step .miss{display:block;font-size:13px;font-weight:400;color:#6b4b44;margin-top:1px}
+.step.lock{opacity:.5;cursor:not-allowed}
+.step.lock:hover{background:none}
+.step.cur{background:#fff;font-weight:700}
+.step.cur .n{background:var(--red)}
+.step.done .n{background:var(--brown);color:#fff}
+.step.bad .n{background:var(--err);border-color:var(--err);color:#fff}
+.bar{display:none;height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:24px}
+.bar i{display:block;height:100%;background:var(--brown)}
+.card{background:#fff;border-radius:24px;padding:40px}
+.card+.card{margin-top:20px}
+h2{margin:0 0 8px;font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:46px;line-height:1}
+.kicker{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.req-note{font-size:15px;margin:0 0 28px}
+.field{display:flex;flex-direction:column;gap:6px;margin-top:26px}
+.field:first-of-type{margin-top:0}
+.lbl{font-weight:600;font-size:17px}
+.lbl .star{color:var(--err)}
+.help{font-size:15px;line-height:1.5;color:#5a3a33}
+p,.help,.lbl,.check span{text-wrap:pretty}
+input[type=text],input[type=email],input[type=url],input[type=number],input[type=date],input[type=time],select,textarea{width:100%;padding:13px 15px;border:1.5px solid #c9bcb1;border-radius:12px;background:#fff;font:inherit;font-size:16px;color:var(--brown);outline:none}
+textarea{min-height:120px;resize:vertical;line-height:1.5}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(69,134,255,.25)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;margin-top:26px;align-items:stretch}
+.two>.field{margin-top:0}
+.two>.field>.help{flex:1 0 auto}
+.req-note+.two,.sub+.two{margin-top:18px}
+@media (max-width:860px){.two{gap:26px 0}}
+input.short{max-width:220px}
+input.xs{max-width:160px}
+input.tm{max-width:140px}
+@media (max-width:560px){input.short,input.xs{max-width:none}}
+.cnt{font-size:14px;align-self:flex-end}
+.cnt.over{color:var(--err);font-weight:700}
+.field.err input,.field.err select,.field.err textarea{border-color:var(--err)}
+.msg{display:none;font-size:14px;font-weight:600;color:var(--err)}
+.field.err .msg{display:block}
+.grid{width:100%;border-collapse:collapse;font-size:15px}
+.grid th{font-weight:600;padding:8px;text-align:center;width:120px}
+.grid th:first-child{text-align:left;width:auto}
+.grid td{padding:10px 8px;border-top:1px solid #efe7df;text-align:center}
+.grid td:first-child{text-align:left}
+.grid input{width:20px;height:20px;accent-color:var(--brown)}
+.check{display:grid;grid-template-columns:28px minmax(0,1fr);gap:12px;align-items:start;font-weight:600;cursor:pointer}
+.check input{width:24px;height:24px;margin:0;accent-color:var(--brown)}
+.intro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 40px}
+.intro h3{margin:0 0 6px;font-size:18px}
+.intro p{margin:0;font-size:16px}
+.drive{display:flex;align-items:center;justify-content:space-between;gap:20px;background:var(--green);border-radius:18px;padding:22px 26px;margin-top:28px}
+.drive b{font-size:18px}
+.drive .t{font-size:15px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:15px 30px;font:inherit;font-size:17px;font-weight:700;cursor:pointer;text-decoration:none;background:var(--red);color:var(--brown)}
+.btn:hover{background:#ff6a52;color:var(--brown)}
+.btn:focus-visible,.step:focus-visible,.drop:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.btn.sec{background:transparent;border:2px solid var(--brown)}
+.btn.sec:hover{background:#fff}
+.btn.dark{background:var(--brown);color:#fff;white-space:nowrap}
+.btn.dark:hover{background:#5a2a24;color:#fff}
+.nav{display:flex;justify-content:space-between;gap:16px;margin-top:28px}
+details.info{border:1.5px solid var(--line);border-radius:16px;padding:18px 22px;margin-top:22px}
+details.info summary{cursor:pointer;font-weight:700}
+details.info p{margin:12px 0 0;font-size:15px}
+.drop{margin-top:26px;border:2px dashed var(--brown);border-radius:20px;padding:36px 24px;text-align:center;cursor:pointer;background:#fbf8f5;transition:background .15s}
+.drop.over{background:#eafbea;border-color:#1a8a3c}
+.drop b{display:block;font-size:20px;margin-bottom:6px}
+.drop span{font-size:15px}
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:16px}
+.file{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;font-size:13px;position:relative}
+.file .th{height:100px;background:repeating-linear-gradient(135deg,#ece3da 0 10px,#f4ede6 10px 20px);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.file .th img{width:100%;height:100%;object-fit:cover;display:block}
+.file .nm{padding:8px 10px 2px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file .sz{padding:0 10px 8px}
+.file button{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:var(--brown);color:#fff;font-size:16px;cursor:pointer;line-height:1}
+.warn{margin-top:12px;font-size:14px;font-weight:600;color:var(--err)}
+.kchips{display:flex;flex-wrap:wrap;gap:8px}
+.kchip{position:relative;display:inline-flex;cursor:pointer}
+.kchip input{position:absolute;opacity:0;width:1px;height:1px;margin:0}
+.kchip span{padding:9px 16px;border:1.5px solid #c9bcb1;border-radius:999px;background:#fff;font-size:15px;line-height:1.3;white-space:nowrap}
+.kchip span:hover{border-color:var(--brown)}
+.kchip input:checked+span{background:var(--brown);border-color:var(--brown);color:#fff}
+.kchip input:checked+span::before{content:'✓ '}
+.kchip input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.field.err .kchip span{border-color:var(--err)}
+.kother{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-width:420px}
+.kother .lbl{font-size:15px}
+.addx{align-self:flex-start;margin-top:4px}
+@media (max-width:860px){.addx[aria-hidden=true]{display:none}}
+details.more{margin-top:26px;border:1.5px solid var(--line);border-radius:16px;padding:18px 22px}
+details.more summary{cursor:pointer;font-weight:700;font-size:17px}
+details.more summary:focus-visible{outline:3px solid var(--blue);outline-offset:4px;border-radius:6px}
+details.more .msub{display:block;font-weight:400;font-size:15px;color:#5a3a33;margin-top:2px}
+details.more>.field:first-of-type{margin-top:18px}
+[hidden]{display:none!important}
+.two:has(>[hidden]){grid-template-columns:minmax(0,1fr)}
+.two:has(>[hidden]) select{max-width:calc(50% - 10px)}
+@media (max-width:860px){.two:has(>[hidden]) select{max-width:none}}
+.rwrap{display:flex;flex-direction:column;gap:8px}
+.rtb{display:flex;gap:6px}
+.rbtn{width:44px;height:40px;border:1.5px solid #c9bcb1;border-radius:10px;background:#fff;font:inherit;font-size:17px;color:var(--brown);cursor:pointer}
+.rbtn:hover{border-color:var(--brown)}
+.rbtn[aria-pressed=true]{background:var(--brown);border-color:var(--brown);color:#fff}
+.rbtn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.rich{min-height:150px;padding:13px 15px;border:1.5px solid #c9bcb1;border-radius:12px;background:#fff;font-size:16px;line-height:1.5;color:var(--brown);outline:none;white-space:pre-wrap;overflow-wrap:anywhere;resize:vertical;overflow:auto}
+.rich:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(69,134,255,.25)}
+.field.err .rich{border-color:var(--err)}
+.alert ul{margin:8px 0 0;padding-left:20px;font-weight:600}
+.alert li{margin-top:4px}
+.alert a{color:var(--brown);text-decoration:underline;text-underline-offset:3px}
+.alert a:hover{color:#fff}
+.alert a:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:4px}
+.overlay .box:focus{outline:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+.legal{max-height:280px;overflow:auto;border:1.5px solid var(--line);border-radius:16px;padding:18px 22px;font-size:15px;margin-top:20px;background:#fbf8f5}
+.legal p{margin:0 0 12px}
+.alert{background:var(--red);border-radius:14px;padding:14px 18px;font-weight:700;margin-bottom:20px}
+.overlay{position:fixed;inset:0;background:rgba(59,26,26,.55);display:none;align-items:center;justify-content:center;z-index:9}
+.overlay.on{display:flex}
+.overlay .box{background:#fff;border-radius:24px;padding:36px 40px;width:min(480px,90vw)}
+.overlay .pb{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin-top:18px}
+.overlay .pb i{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.done-ic{width:76px;height:76px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;margin-bottom:20px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.sub{margin:44px 0 0;padding-top:28px;border-top:1.5px solid var(--line);font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:30px;line-height:1.05}
+.req-note+.sub{margin-top:8px;border-top:0;padding-top:0}
+.sub+.field{margin-top:18px}
+.legal+.field{margin-top:20px}
+h2[tabindex]:focus{outline:none}
+.btn{white-space:nowrap;flex-shrink:0}
+.nav{flex-wrap:wrap;row-gap:12px}
+.nav-r{margin-left:auto}
+@media (max-width:640px){.nav>.btn.sec{order:2}.nav-r{width:100%;flex-direction:column-reverse;align-items:stretch}.nav-r .btn{justify-content:center}}
+.fsum{margin-top:18px;font-size:15px;font-weight:600}
+.flist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.fi{display:grid;grid-template-columns:64px minmax(0,1fr) auto auto;gap:14px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff}
+.fi .th{width:64px;height:48px;border-radius:8px;overflow:hidden;background:repeating-linear-gradient(135deg,#ece3da 0 8px,#f4ede6 8px 16px);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.fi .th img{width:100%;height:100%;object-fit:cover;display:block}
+.fi .nm{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi .sz{font-size:13px}
+.pbar{height:6px;background:#efe7df;border-radius:3px;overflow:hidden;margin-top:6px}
+.pbar i{display:block;height:100%;background:var(--brown);transition:width .2s}
+.fi.done .pbar i{background:#1a8a3c}
+.fi.err,.fi.big{border-color:var(--err)}
+.fi.err .sz,.fi.big .sz{color:var(--err);font-weight:600}
+.fi.err .pbar i,.fi.big .pbar i{background:var(--err)}
+.x{width:32px;height:32px;border-radius:50%;border:0;background:var(--brown);color:#fff;font-size:18px;cursor:pointer;line-height:1}
+.mini{border:2px solid var(--brown);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:14px;font-weight:700;color:var(--brown);cursor:pointer}
+.nav-r{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.btn.ghost{background:transparent;text-decoration:underline;padding:15px 12px}
+.btn.ghost:hover{background:transparent;color:var(--err)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--brown);color:#fff;padding:14px 20px;border-radius:14px;font-size:15px;line-height:1.45;max-width:min(560px,92vw);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.bad{background:var(--err)}
+.fmeta{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px;padding-top:4px}
+.fmeta label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600}
+.fmeta input,.fmeta select{padding:9px 12px;font-size:15px}
+.fmeta input.bad{border-color:var(--err)}
+.fhint{font-size:14px;margin-top:4px}
+.rep{display:flex;flex-direction:column;gap:10px}
+.rrow{display:flex;gap:10px;align-items:center}
+.rrow input{flex:1;min-width:0}
+.orgs{display:flex;flex-direction:column;gap:12px}
+.orow{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:14px;align-items:start;border:1.5px solid var(--line);border-radius:16px;padding:16px;background:#fff}
+.onum{width:32px;height:32px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.obody{display:flex;flex-direction:column;gap:12px;min-width:0}
+.ogrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+.orow label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600}
+.orow input[type=text]{padding:10px 12px;font-size:15px}
+.orow input.bad{border-color:var(--err)}
+.olbl{font-size:14px;font-weight:600;margin-bottom:-4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;border-radius:12px}
+.chips.bad{outline:2px solid var(--err);outline-offset:4px}
+.orow label.chip{display:inline-flex;flex-direction:row;position:relative;cursor:pointer;font-weight:500}
+.ogrid label{justify-content:space-between}
+.chip input{position:absolute;opacity:0;width:1px;height:1px}
+.chip span{display:inline-block;white-space:nowrap;padding:7px 14px;border:1.5px solid #c9bcb1;border-radius:999px;font-size:14px;background:#fff}
+.chip input:checked+span{background:var(--brown);border-color:var(--brown);color:#fff}
+.chip input:focus-visible+span{outline:3px solid var(--blue);outline-offset:2px}
+.oact{display:flex;gap:6px}
+.ob{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--brown);background:#fff;color:var(--brown);font-size:15px;cursor:pointer}
+.orgs .mini{align-self:flex-start;padding:8px 16px}
+@media (max-width:640px){.ogrid{grid-template-columns:minmax(0,1fr)}.orow{grid-template-columns:minmax(0,1fr) auto}.onum{display:none}}
+.rep .mini{align-self:flex-start;padding:8px 16px}
+.fmeta label:first-child{grid-column:1/-1;max-width:260px}
+@media (max-width:640px){.fmeta{grid-template-columns:minmax(0,1fr)}.fmeta label{grid-column:1/-1!important;max-width:none}}
+@media (max-width:860px){
+  .top-in{height:72px}.top img{height:44px}
+  .layout{grid-template-columns:minmax(0,1fr);gap:0}
+  .steps{display:none}.bar{display:block}
+  .hero h1{font-size:44px}.card{padding:26px 20px;border-radius:18px}
+  .two,.intro{grid-template-columns:minmax(0,1fr)}
+  .drive{flex-direction:column;align-items:flex-start}
+  .grid th{width:auto;font-size:13px}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap top-in"><div id="logo"></div><span class="draft" id="draft" aria-live="polite"></span></div></header>
+<div class="hero"><div class="wrap"><h1>Formularz komunikacyjny</h1><p>Sezon Francja–Polska 2027</p></div></div>
+<div class="wrap layout">
+  <nav class="steps" id="steps" aria-label="Sekcje formularza"></nav>
+  <main id="main"><div class="bar" id="bar"><i></i></div><div id="page"></div></main>
+</div>
+<div class="overlay" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovT"><div class="box" tabindex="-1"><b id="ovT" style="font-size:20px">Wysyłanie zgłoszenia…</b><div id="ovS" style="font-size:15px;margin-top:6px"></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="sr" id="sr" role="status" aria-live="polite"></div>
+
+<script>
+const KONFIG = {
+  apiUrl: 'https://script.google.com/macros/s/AKfycbw8CidrLcO-rhhmw9O2m0Cx6h_cvF7TXqPO__Se-Mq85ou6oroBkpGsg5HnTmmZNfPo/exec', // adres Apps Script konta Sezonu
+  logoUrl: 'logo.png',   // plik logo w repozytorium; zmiana logo = wgranie nowego pliku logo.png
+  emailKontakt: 'francjapolska2027@gmail.com',
+  maxGB: 5, maxPlikow: 40
+};
+
+const DYS = ['Architektura, urbanistyka i krajobraz','Praktyki artystyczne i społeczności','Muzyka klasyczna','Muzyka współczesna','Dziedzictwo kulturowe','Kultura, gospodarka, innowacje i technologie','Debata','Design, moda i rzemiosło','Edukacja','Film i sztuki audiowizualne (w tym sztuka wideo)','Gastronomia','Szkolnictwo wyższe i kultura naukowa','Literatura i komiks','Sztuki performatywne (teatr, taniec, cyrk i lalkarstwo)','Fotografia','Muzyka popularna i jazz','Sport','Gry wideo i twórczość cyfrowa (w tym rzeczywistość wirtualna)','Sztuki wizualne (w tym sztuka współczesna)'];
+const FOR = ['Targi sztuki','Współpraca lub wymiana artystyczna','Rezydencja artystyczna','Koncert','Trasa koncertowa','Debata','Wystawa','Festiwal','Instalacja','Wykład','Spektakl','Publikacja','Projekcja filmowa','Prezentacja','Spotkanie','Warsztaty'];
+const WST = ['Bilety płatne','Wstęp wolny','Wstęp wolny po rejestracji','Wstęp za zaproszeniem','Do potwierdzenia','Inny'];
+const DOS = { rows: ['Dostęp dla osób poruszających się na wózkach','Tłumaczenie na polski język migowy (PJM)','Audiodeskrypcja','Napisy lub nadpisy','Pętla indukcyjna','Tekst łatwy do czytania (ETR)','Formuła przyjazna sensorycznie'], cols: ['Tak','Nie','Do potwierdzenia'] };
+
+const MATERIALY = [
+ 'Przekaż oficjalne materiały dopuszczone do wykorzystania w internecie, druku, na nośnikach reklamy zewnętrznej oraz na ekranach podczas wydarzeń. Prosimy o pliki w najwyższej dostępnej jakości.',
+ '<b>Zdjęcia.</b> Udostępnij 2–3 poziome propozycje zdjęcia głównego i do 20 zdjęć dodatkowych w formatach poziomym i pionowym. Dołącz autoryzowane portrety prasowe w wysokiej rozdzielczości dla wszystkich wymienionych osób. Prześlij pliki JPEG w najwyższej jakości, o rozdzielczości min. 20 Mpx (ok. 5500 × 3600 px), z wolną przestrzenią do składu, bez filtrów, napisów i znaków wodnych.',
+ '<b>Wideo.</b> Prześlij pliki MP4 lub MOV, 25 kl./s, najlepiej w 4K, co najmniej w Full HD (1920 × 1080 px lub odpowiednik w pionie). Dołącz ujęcia poziome (16:9) i pionowe (9:16) bez napisów i grafik. W miarę możliwości udostępnij wersje ze ścieżką dźwiękową i bez niej. Używaj muzyki objętej licencją.',
+ '<b>Logotypy i grafiki.</b> Dołącz księgi znaku organizatorów, kolory firmowe (CMYK, Pantone, RGB i HEX), logotypy wektorowe (AI, EPS, SVG lub PDF) i pliki PNG z przezroczystym tłem. Uwzględnij wersje kolorowe, monochromatyczne i w negatywie. Grafiki prześlij w plikach otwartych (AI, PSD lub INDD) albo jako PDF w wysokiej rozdzielczości.'
+];
+const NOTA = [
+ 'Przekazując materiały za pośrednictwem formularza i zawartych w nim odnośników, oświadczam, że posiadam pełnię praw autorskich lub licencję do przekazanych materiałów, w tym zdjęć, wideo, logotypów i grafik. Posiadam zgody osób widocznych w materiałach na rozpowszechnianie ich wizerunku. Podane opisy i informacje o autorstwie są prawdziwe i kompletne.',
+ 'Udzielam Instytutowi Adama Mickiewicza oraz podmiotom działającym na jego zlecenie nieodpłatnej, nieograniczonej terytorialnie licencji na korzystanie z materiałów w ramach projektu Sezon Francja–Polska 2027. Licencja obejmuje internet, media społecznościowe, reklamę zewnętrzną i cyfrową, druk, prasę oraz wydarzenia. Obejmuje także prawo do kadrowania, adaptacji formatów i łączenia materiałów z tekstem i grafiką.',
+ 'Biorę pełną odpowiedzialność za ewentualne roszczenia osób trzecich związane z wykorzystaniem materiałów i zobowiązuję się zwolnić Institut français z wszelkiej odpowiedzialności z tego tytułu.',
+ '<b>Informacja o redakcji treści</b><br>Instytut Adama Mickiewicza zastrzega sobie prawo do nieograniczonej modyfikacji treści przekazanych w formularzu. Będą one redagowane i formatowane z uwzględnieniem poszczególnych etapów i kanałów komunikacji oraz ogólnej koncepcji komunikacji Sezonu.'
+];
+
+// [typ, tytuł, wymagane, opis, opcje, do_tłumaczenia, układ]  układ 'h' = pół szerokości
+const SEK = [
+ { t: 'Informacje o wydarzeniu', p: [
+  ['T','Tytuł wydarzenia',1,'Podaj oficjalny tytuł do publikacji.',0,1],
+  ['T','Podtytuł wydarzenia',0,'Podaj podtytuł, jeśli dotyczy.',0,1],
+  ['T','Nazwa projektu nadrzędnego',0,'Jeśli wydarzenie jest częścią większego projektu, festiwalu lub cyklu, podaj jego nazwę.',0,1],
+  ['P','Organizatorzy, współorganizatorzy i partnerzy',1,'Wymień polskiego organizatora, francuskiego partnera i pozostałe osoby lub podmioty do uwzględnienia w materiałach. Podaj nazwę lub imię i nazwisko, kraj oraz rolę. Zachowaj kolejność do publikacji i podaj każdy wpis w osobnym wierszu. Kilka ról tego samego podmiotu wpisz w jednym wierszu.',0,1],
+  ['L','Główna dyscyplina',1,'Wybierz główną dyscyplinę wydarzenia.',DYS,0,'h'],
+  ['L','Dodatkowa dyscyplina',0,'Wybierz drugą dyscyplinę, jeśli dotyczy.',DYS,0,'h'],
+  ['L','Główny format wydarzenia',1,'Wybierz główny format wydarzenia.',FOR,0,'h'],
+  ['L','Dodatkowy format wydarzenia',0,'Wybierz drugi format, jeśli dotyczy.',FOR,0,'h'],
+  ['K','Grupa odbiorców',1,'Zaznacz wszystkie, które pasują.',{ opts: ['Szeroka publiczność','Rodziny z dziećmi','Dzieci','Młodzież','Studenci','Seniorzy','Branża i profesjonaliści','Inna'], other: 'Inna', q: 'Jaka grupa?' },1],
+  ['K','Języki wydarzenia',0,'Zaznacz języki używane podczas wydarzenia.',{ opts: ['polski','francuski','angielski','bez języka mówionego','inny'], other: 'inny', q: 'Jaki język?' },1],
+  ['P','Krótki opis wydarzenia',1,'Napisz wprowadzenie dla publiczności. Maksymalnie 3 zdania i 600 znaków.',600,1],
+  ['P','Szczegółowy opis wydarzenia',1,'Opisz wydarzenie na potrzeby publikacji. Maksymalnie 15 zdań i 1600 znaków.',1600,1],
+  ['P','Artyści, kuratorzy i pozostałe osoby uczestniczące w programie',1,'Wymień osoby w kolejności do publikacji, po jednej w każdym wierszu. Przy każdym nazwisku podaj rolę. Jeśli wydarzenie nie ma imiennie wskazanych osób, wpisz „Nie dotyczy”.',0,1],
+  ['B','Biogramy osób uczestniczących',0,'Podaj krótkie biogramy podpisane imieniem i nazwiskiem lub wklej link do pliku z biogramami. Pogrubienie i kursywa zachowują się przy wklejaniu z Worda lub Dokumentów Google. Możesz też zaznaczyć tekst i użyć przycisków nad polem: B (pogrubienie) lub I (kursywa).',0,1],
+  ['P','Dodatkowe treści do publikacji',0,'Dodaj tekst kuratorski, cytaty lub opis instytucji. Możesz również podać link do pliku PDF.',0,1]
+ ]},
+ { t: 'Terminy i miejsca', p: [
+  ['D','Data rozpoczęcia',1,'Jeśli wydarzenie ma kilka terminów, podaj pierwszą datę.',0,0,'h'],
+  ['D','Data zakończenia',0,'Uzupełnij, jeśli wydarzenie kończy się w innym dniu niż się rozpoczyna.',0,0,'h'],
+  ['H','Godzina rozpoczęcia',1,'Podaj godzinę rozpoczęcia dla publiczności według czasu lokalnego. Przy wydarzeniu wielodniowym podaj godzinę otwarcia pierwszego dnia.',0,0,'h'],
+  ['H','Godzina zakończenia',0,'Podaj godzinę zakończenia według czasu lokalnego, jeśli jest znana.',0,0,'h'],
+  ['T','Nazwa głównego miejsca wydarzenia',1,'Podaj oficjalną nazwę miejsca. Jeśli dotyczy, wskaż budynek, salę lub scenę.'],
+  ['T','Ulica i numer',1,'Podaj oficjalny adres miejsca.'],
+  ['T','Kod pocztowy',1,'Użyj formatu przyjętego w danym kraju, np. 75001 we Francji.',0,0,'h'],
+  ['T','Miejscowość',1,'',0,0,'h'],
+  ['T','Kraj',1,'Podaj nazwę kraju po polsku.'],
+  ['P','Pokaz przedpremierowy, otwarcie i zamknięcie',0,'Wskaż, czy planowany jest pokaz przedpremierowy, wernisaż, uroczyste otwarcie lub finisaż. Podaj rodzaj, datę i godzinę każdego punktu oraz miejsce, jeśli jest inne niż główne miejsce wydarzenia.',0,1],
+  ['P','Dodatkowe terminy i miejsca',0,'Każdy dodatkowy termin lub miejsce wpisz w osobnym wierszu. Podaj daty, lokalne godziny rozpoczęcia i zakończenia, nazwę miejsca, ulicę i numer, kod pocztowy, miejscowość, kraj oraz współrzędne, jeśli są dostępne.']
+ ]},
+ { t: 'Wstęp i dostępność', p: [
+  ['L','Sposób wstępu',0,'Wybierz sposób wstępu. Jeśli to potrzebne, pojawią się pola na ceny, link i datę sprzedaży.',WST],
+  ['P','Ceny, pula biletów i warunki wstępu',0,'Podaj ceny regularne i ulgowe z walutą, przybliżoną pulę biletów, zniżki, ograniczenia wiekowe i pozostałe zasady wstępu lub rejestracji.',0,1],
+  ['U','Link do biletów lub rejestracji',0,'Wklej pełny adres strony sprzedaży lub rejestracji.'],
+  ['D','Data rozpoczęcia sprzedaży lub rejestracji',0,'Podaj datę rozpoczęcia sprzedaży lub rejestracji, jeśli jest znana.',0,0,'h'],
+  ['N','Maksymalna liczba uczestników',0,'Podaj maksymalną liczbę osób, które mogą wziąć udział w wydarzeniu.',0,0,'h'],
+  ['G','Udogodnienia i usługi dostępności',0,'Wskaż, które udogodnienia są dostępne. W sprawach będących w trakcie ustaleń zaznacz „Do potwierdzenia”.',DOS],
+  ['P','Dodatkowe informacje o dostępności',0,'Podaj praktyczne informacje o udogodnieniach, np. zasady dostępu, język napisów lub tłumaczenia oraz terminy, w których dana usługa będzie dostępna. Możesz dodać link ze szczegółami.',0,1]
+ ]},
+ { t: 'Materiały promocyjne', upload: true, p: [
+  ['U','Folder z materiałami promocyjnymi',1,'Jeśli nie dodajesz plików powyżej albo część materiałów jest w innym miejscu (Dysk, WeTransfer, Dropbox), wklej link do folderu i upewnij się, że zespół Sezonu ma do niego dostęp. W nazwie folderu podaj tytuł wydarzenia i nazwę organizatora.'],
+  ['P','Opisy plików z folderu',0,'Wymagane, jeśli podajesz link do folderu powyżej. Przy każdym pliku podaj nazwę, autora i co przedstawia, każdy plik w osobnym wierszu. Dla wideo dodaj czas trwania, orientację i języki napisów. Możesz też wkleić link do wykazu plików.',0,1],
+  ['P','Ograniczenia w wykorzystaniu materiałów',0,'Opisz ograniczenia, jeśli są, np. tylko do materiałów prasowych, do określonej daty, bez kadrowania albo z obowiązkowym podpisem twórcy przedstawionego dzieła.',0,1],
+  ['R','Publiczne linki do wideo',0,'Podaj linki YouTube lub Vimeo do filmów, które można osadzić na stronie wydarzenia.']
+ ]},
+ { t: 'Kontakty, komunikacja i oświadczenie', legal: true, p: [
+  ['S','Strony i media społecznościowe'],
+  ['U','Strona wydarzenia',0,'Podaj link do strony wydarzenia u organizatora.'],
+  ['U','Strona organizatora',0,'Podaj link do głównej strony organizatora.'],
+  ['P','Media społecznościowe, wspólne publikacje i inne linki',0,'Podaj stronę organizatora na Facebooku, jego konto na Instagramie, link do wydarzenia na Facebooku oraz pozostałe kanały i istotne linki. Uwzględnij konta na Instagramie współorganizatorów, artystów i kuratorów do oznaczenia. Podaj adres URL i nazwę użytkownika, jeśli dotyczy. Przy każdym koncie na Instagramie lub Facebooku wskaż, czy może współpublikować posty z profilem Sezonu. Dodaj hasztagi i pozostałe oznaczenia do użycia.'],
+  ['S','Kontakty i plan komunikacji'],
+  ['P','Kontakt do osoby zarządzającej projektem',1,'Podaj nazwę organizacji, imię i nazwisko, funkcję, telefon i adres e-mail osoby zarządzającej projektem.'],
+  ['P','Kontakt do osoby odpowiedzialnej za komunikację',1,'Podaj nazwę organizacji, imię i nazwisko, funkcję, telefon i adres e-mail.'],
+  ['T','Plan komunikacji wydarzenia',0,'Udostępnij link do planu komunikacji wydarzenia lub wyślij plan na adres sezon@mediocre.agency. Pomoże nam to skoordynować promocję wydarzenia z kampanią Sezonu.'],
+  ['P','Dodatkowe uwagi',0,'Dodaj inne informacje istotne dla zespołu Sezonu.'],
+  ['S','Oświadczenie organizatora'],
+  ['C','Potwierdzenie oświadczenia',1,'','Potwierdzam treść oświadczenia i udzielam opisanej w nim licencji.']
+ ]}
+];
+const PAGES = ['Wstęp'].concat(SEK.map(s => s.t));
+const UP = SEK.findIndex(s => s.upload);
+const KEY = 'sezon2027_formularz_partnera';
+const DEMO = !KONFIG.apiUrl;
+const SMALL = 20 * 1048576;
+
+let pass = ''; try { pass = localStorage.getItem('sezon2027_formularz_haslo') || ''; } catch (e) {}
+let cur = 0, vals = {}, files = [], tried = {}, left = {}, visited = { 0: true }, token = null, tokP = null, uploading = 0;
+const rk = () => Math.random().toString(36).slice(2, 10);
+try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); if (d) { vals = d.vals || {}; token = d.token || null; files = (d.files || []).map(f => Object.assign({}, f, { key: rk(), status: 'done', pct: 100 })); } } catch (e) {}
+
+const $ = id => document.getElementById(id);
+const mailLink = () => '<a class="mail" href="mailto:' + esc(KONFIG.emailKontakt) + '">' + esc(KONFIG.emailKontakt) + '</a>';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fid = (s, i) => 'f' + s + '_' + i;
+const fmt = b => b >= 1073741824 ? (b / 1073741824).toFixed(1) + ' GB' : b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' kB';
+
+$('logo').innerHTML = KONFIG.logoUrl ? '<img src="' + esc(KONFIG.logoUrl) + '" alt="Saison Pologne–France 2027" onerror="this.outerHTML=\'<span class=&quot;wordmark&quot;>Saison Pologne–France 2027</span>\'">' : '<span class="wordmark">Saison Pologne–France 2027</span>';
+$('draft').textContent = DEMO ? 'Tryb pokazowy: dane nie są wysyłane' : '';
+
+/* ---------- komunikacja z Apps Script ---------- */
+async function api(a, data) {
+  if (DEMO) {
+    await new Promise(r => setTimeout(r, 350));
+    if (a === 'start') return { token: 'demo-' + rk(), nr: 'TEST' };
+    if (a === 'submit') return { nr: 'TEST' };
+    if (a === 'load') return null;
+    return { ok: true };
+  }
+  const r = await fetch(KONFIG.apiUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ a: a, h: pass }, data)) });
+  const j = await r.json();
+  if (j.code === 'haslo') { pass = ''; try { localStorage.removeItem('sezon2027_formularz_haslo'); } catch (e) {} }
+  if (j.error) throw new Error(j.error);
+  return j;
+}
+function ensureToken() {
+  if (token) return Promise.resolve(token);
+  if (!tokP) tokP = api('start', { email: vals.email }).then(r => { token = r.token; persist(); return token; }).finally(() => { tokP = null; });
+  return tokP;
+}
+const doneFiles = () => files.filter(f => f.status === 'done').map(f => ({ id: f.id, name: f.name, size: f.size, type: f.type }));
+function updMiss() {
+  const el = $('missNote'); if (!el || cur < 1) return;
+  const n = tried[cur - 1] ? missingOn(cur - 1).length : 0;
+  el.textContent = n ? 'Brakuje ' + n + ' ' + (n === 1 ? 'pola' : 'pól') : '';
+}
+function persist() {
+  applyVis();
+  if (cur > 0 && tried[cur - 1]) { renderSteps(); updMiss(); }
+  try { localStorage.setItem(KEY, JSON.stringify({ vals: vals, token: token, files: doneFiles() })); } catch (e) {}
+  $('draft').textContent = (DEMO ? 'Tryb pokazowy · ' : '') + 'Zapisano ' + new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+}
+let tt;
+function toast(m, bad) { const t = $('toast'); t.textContent = m; t.className = 'toast on' + (bad ? ' bad' : ''); clearTimeout(tt); tt = setTimeout(() => { t.className = 'toast'; }, 7000); }
+
+/* ---------- walidacja ---------- */
+function value(s, i) {
+  const p = SEK[s].p[i], v = vals[fid(s, i)] != null ? vals[fid(s, i)] : DEF[p[1]];
+  if (!vis(s, i)) return p[1] === COMM && vals.x_same ? 'Jak wyżej' : '';
+  if (p[0] === 'K') { const o = kv(v); return o.sel.map(x => x === p[4].other || x === '__inne' ? o.o.trim() : x).filter(Boolean).join(', '); }
+  if (p[0] === 'G') return v ? p[4].rows.map((r, k) => v[k] != null ? r + ': ' + p[4].cols[v[k]] : null).filter(Boolean).join('\n') : '';
+  if (p[0] === 'C') return v ? p[4] : '';
+  if (p[0] === 'O') return orgRows(v).filter(r => r.n.trim()).map((r, k) => (k + 1) + '. ' + r.n.trim() + (r.c.trim() ? ' (' + r.c.trim() + ')' : '') + ' – ' + r.r.map(x => x === 'Inna rola' && r.o.trim() ? r.o.trim() : x).join(', ')).join('\n');
+  if (p[0] === 'R') return arrOf(v).map(x => x.trim()).filter(Boolean).join('\n');
+  return v || '';
+}
+const ROLE = ['Organizator', 'Współorganizator', 'Partner', 'Partner medialny', 'Sponsor', 'Inna rola'];
+const orgRows = v => Array.isArray(v) && v.length ? v.map(r => r && typeof r === 'object' ? { n: r.n || '', c: r.c || '', r: (r.r || []).slice(), o: r.o || '' } : { n: String(r || ''), c: '', r: [], o: '' })
+  : typeof v === 'string' && v.trim() ? v.split('\n').filter(x => x.trim()).map(x => ({ n: x, c: '', r: [], o: '' }))
+  : [{ n: '', c: 'Polska', r: ['Organizator'], o: '' }, { n: '', c: 'Francja', r: ['Partner'], o: '' }];
+const orgBad = r => r.n.trim() && (!r.r.length || (r.r.indexOf('Inna rola') >= 0 && !r.o.trim()));
+function orgRow(id, r, k, n, show) {
+  const a = ' data-f="' + id + '" data-oi="' + k + '"';
+  return '<div class="orow"><div class="onum" aria-hidden="true">' + (k + 1) + '</div><div class="obody">'
+    + '<div class="ogrid"><label>Nazwa lub imię i nazwisko<input type="text"' + a + ' data-ok="n" value="' + esc(r.n) + '"' + (k === 0 ? ' id="' + id + '"' : '') + '></label>'
+    + '<label>Kraj<input type="text" list="kraje"' + a + ' data-ok="c" value="' + esc(r.c) + '"></label></div>'
+    + '<div class="olbl" id="' + id + '_r' + k + '">Rola</div><div class="chips' + (show && r.n.trim() && !r.r.length ? ' bad' : '') + '" role="group" aria-labelledby="' + id + '_r' + k + '">'
+    + ROLE.map(x => '<label class="chip"><input type="checkbox"' + a + ' data-ok="r" value="' + x + '"' + (r.r.indexOf(x) >= 0 ? ' checked' : '') + '><span>' + x + '</span></label>').join('') + '</div>'
+    + (r.r.indexOf('Inna rola') >= 0 ? '<label>Jaka rola?<input type="text"' + a + ' data-ok="o" value="' + esc(r.o) + '" placeholder="np. patronat honorowy"' + (show && r.n.trim() && !r.o.trim() ? ' class="bad"' : '') + '></label>' : '')
+    + '</div><div class="oact">'
+    + (k > 0 ? '<button type="button" class="ob" data-omv="' + id + '" data-oi="' + k + '" data-d="-1" aria-label="Przesuń podmiot ' + (k + 1) + ' wyżej">↑</button>' : '')
+    + (k < n - 1 ? '<button type="button" class="ob" data-omv="' + id + '" data-oi="' + k + '" data-d="1" aria-label="Przesuń podmiot ' + (k + 1) + ' niżej">↓</button>' : '')
+    + (n > 1 ? '<button type="button" class="x" data-odel="' + id + '" data-oi="' + k + '" aria-label="Usuń podmiot ' + (k + 1) + '">×</button>' : '')
+    + '</div></div>';
+}
+
+/* ---------- pola warunkowe i grupy ---------- */
+const IDX = {}; SEK.forEach((S, s) => S.p.forEach((p, i) => { IDX[p[1]] = fid(s, i); }));
+const COMM = 'Kontakt do osoby odpowiedzialnej za komunikację';
+const MORE = ['Biogramy osób uczestniczących', 'Dodatkowe treści do publikacji'];
+const DEF = { 'Kraj': 'Francja' };
+const ADD = { 'Główna dyscyplina': { k: 'x_dys', t: '+ Dodaj drugą dyscyplinę', to: 'Dodatkowa dyscyplina' }, 'Główny format wydarzenia': { k: 'x_for', t: '+ Dodaj drugi format', to: 'Dodatkowy format wydarzenia' } };
+const has = l => { const v = vals[IDX[l]]; return v != null && String(v).trim() !== ''; };
+const wst = () => vals[IDX['Sposób wstępu']] || '';
+const SHOW = {
+  'Dodatkowa dyscyplina': () => vals.x_dys || has('Dodatkowa dyscyplina'),
+  'Dodatkowy format wydarzenia': () => vals.x_for || has('Dodatkowy format wydarzenia'),
+  'Ceny, pula biletów i warunki wstępu': () => ['Bilety płatne', 'Wstęp wolny po rejestracji', 'Wstęp za zaproszeniem', 'Inny'].indexOf(wst()) >= 0,
+  'Link do biletów lub rejestracji': () => ['Bilety płatne', 'Wstęp wolny po rejestracji'].indexOf(wst()) >= 0,
+  'Data rozpoczęcia sprzedaży lub rejestracji': () => ['Bilety płatne', 'Wstęp wolny po rejestracji'].indexOf(wst()) >= 0,
+  'Opisy plików z folderu': () => has('Folder z materiałami promocyjnymi'),
+  'Ograniczenia w wykorzystaniu materiałów': () => has('Folder z materiałami promocyjnymi') || hasF(),
+  [COMM]: () => !vals.x_same
+};
+function vis(s, i) { const f = SHOW[SEK[s].p[i][1]]; return !f || !!f(); }
+function applyVis() {
+  document.querySelectorAll('[data-vis]').forEach(el => { const a = el.dataset.vis.split('_'); el.hidden = !vis(+a[0], +a[1]); });
+  document.querySelectorAll('[data-xadd]').forEach(b => { const a = Object.values(ADD).find(x => x.k === b.dataset.xadd); const on = !!SHOW[a.to](); b.style.visibility = on ? 'hidden' : ''; if (on) { b.setAttribute('aria-hidden', 'true'); b.tabIndex = -1; } else { b.removeAttribute('aria-hidden'); b.removeAttribute('tabindex'); } });
+}
+const kv = v => v && typeof v === 'object' && !Array.isArray(v) ? { sel: (v.sel || []).slice(), o: v.o || '' } : { sel: typeof v === 'string' && v.trim() ? ['__inne'] : [], o: typeof v === 'string' ? v : '' };
+const sameHtml = () => '<div class="field"><label class="check"><input type="checkbox" data-x="x_same"' + (vals.x_same ? ' checked' : '') + '><span>Za komunikację odpowiada ta sama osoba</span></label></div>';
+document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.more')) { vals.x_more = e.target.open; persist(); } }, true);
+if (!has('Dodatkowa dyscyplina')) vals.x_dys = 0;
+if (!has('Dodatkowy format wydarzenia')) vals.x_for = 0;
+const arrOf = v => Array.isArray(v) ? v : (typeof v === 'string' && v ? v.split('\n') : []);
+function missingOn(s) {
+  const out = [], okFiles = files.filter(f => f.status === 'queue' || f.status === 'up' || f.status === 'done').length;
+  SEK[s].p.forEach((p, i) => {
+    if (!vis(s, i)) return;
+    let need = p[2];
+    if (SEK[s].upload && i === 0 && okFiles) need = 0;
+    if (SEK[s].upload && p[1] === 'Opisy plików z folderu' && String(value(s, 0)).trim()) need = 1;
+    const v = value(s, i);
+    if (need && !String(v).trim()) out.push(i);
+    else if (p[0] === 'U' && v && !/^https?:\/\/\S+\.\S+/.test(v)) out.push(i);
+    else if (p[0] === 'O' && orgRows(vals[fid(s, i)]).some(orgBad)) out.push(i);
+    else if (p[0] === 'R' && arrOf(vals[fid(s, i)]).some(x => x.trim() && !/^https?:\/\/\S+\.\S+/.test(x.trim()))) out.push(i);
+    else if (p[0] === 'P' && p[4] && v.length > p[4]) out.push(i);
+    else if (p[0] === 'K') { const o = kv(vals[fid(s, i)]); if ((o.sel.indexOf(p[4].other) >= 0 || o.sel.indexOf('__inne') >= 0) && !o.o.trim()) out.push(i); }
+  });
+  if (SEK[s].upload && fmMissing().length) out.push(-1);
+  return out;
+}
+function emailBad() { return !/^\S+@\S+\.\S+$/.test(vals.email || ''); }
+
+/* ---------- widok ---------- */
+function renderSteps() {
+  $('steps').innerHTML = PAGES.map((t, k) => {
+    const s = k - 1, filled = k === 0 || SEK[s].p.some((p, i) => String(value(s, i)).trim()) || (SEK[s].upload && files.length), complete = (k === 0 ? !emailBad() : !missingOn(s).length) && filled;
+    const bad = false, done = visited[k] && k !== cur && complete;
+    const cls = 'step' + (k === cur ? ' cur' : bad ? ' bad' : done ? ' done' : '');
+    const lock = k > 0 && emailBad();
+    return '<button class="' + cls + (lock ? ' lock' : '') + '" data-go="' + k + '"' + (k === cur ? ' aria-current="step"' : '') + (lock ? ' aria-disabled="true" title="Najpierw podaj adres e-mail"' : '') + '><span class="n">' + (bad ? '!' : done ? '✓' : k === 0 ? '<i class="dot"></i>' : k) + '</span><span class="tx">' + esc(t) + (k > 0 && !bad && (k !== cur ? left[s] || tried[s] : tried[s]) && missingOn(s).length ? '<span class="miss">brakuje ' + missingOn(s).length + ' ' + (missingOn(s).length === 1 ? 'pola' : 'pól') + '</span>' : '') + '</span></button>';
+  }).join('');
+  $('bar').firstElementChild.style.width = (cur / (PAGES.length - 1) * 100) + '%';
+}
+
+function fieldHtml(s, i) {
+  const p = SEK[s].p[i], id = fid(s, i), v = vals[id] != null ? vals[id] : DEF[p[1]];
+  const bad = tried[s] && missingOn(s).indexOf(i) >= 0;
+  let ctl = '', msg = 'To pole jest wymagane.';
+  if (p[0] === 'S') return '<h3 class="sub">' + esc(p[1]) + '</h3>';
+  const dby = [p[3] ? id + '_h' : '', bad ? id + '_e' : ''].filter(Boolean).join(' ');
+  const attrs = 'id="' + id + '" data-f="' + id + '"' + (p[2] ? ' aria-required="true"' : '') + (dby ? ' aria-describedby="' + dby + '"' : '') + (bad ? ' aria-invalid="true"' : '');
+  switch (p[0]) {
+    case 'B': ctl = '<div class="rwrap"><div class="rtb" role="toolbar" aria-label="Formatowanie tekstu" aria-controls="' + id + '"><button type="button" class="rbtn" data-cmd="bold" aria-pressed="false" aria-label="Pogrubienie" title="Pogrubienie"><b>B</b></button><button type="button" class="rbtn" data-cmd="italic" aria-pressed="false" aria-label="Kursywa" title="Kursywa"><i>I</i></button></div><div class="rich" contenteditable="true" role="textbox" aria-multiline="true" id="' + id + '" data-f="' + id + '" aria-labelledby="' + id + '_lb"' + (p[3] ? ' aria-describedby="' + id + '_h"' : '') + '>' + richHtml(v || '', vals[id + '_r']) + '</div></div>'; break;
+    case 'K': { const o = kv(v), ot = o.sel.indexOf(p[4].other) >= 0 || o.sel.indexOf('__inne') >= 0; ctl = '<div class="kchips" role="group" aria-labelledby="' + id + '_lb"' + (dby ? ' aria-describedby="' + dby + '"' : '') + '>' + p[4].opts.map((x, k) => '<label class="kchip"><input type="checkbox" data-f="' + id + '" data-kc="' + esc(x) + '"' + (k === 0 ? ' id="' + id + '"' : '') + (o.sel.indexOf(x) >= 0 || (x === p[4].other && ot) ? ' checked' : '') + '><span>' + esc(x) + '</span></label>').join('') + '</div><div class="kother" id="' + id + '_ow"' + (ot ? '' : ' hidden') + '><label class="lbl" for="' + id + '_o">' + esc(p[4].q) + '</label><input type="text" id="' + id + '_o" data-f="' + id + '" data-ko="1" value="' + esc(o.o) + '"></div>'; msg = ot && !o.o.trim() && o.sel.length ? 'Wpisz, czego dotyczy opcja „' + p[4].other + '”.' : 'Zaznacz co najmniej jedną opcję.'; break; }
+    case 'T': ctl = '<input type="text"' + (p[1] === 'Kod pocztowy' ? ' class="xs"' : '') + ' ' + attrs + ' value="' + esc(v) + '">'; break;
+    case 'U': ctl = '<input type="url" ' + attrs + ' placeholder="https://" value="' + esc(v) + '">'; if (v) msg = 'Wpisz pełny adres, np. https://…'; break;
+    case 'N': ctl = '<input type="number" class="xs" min="0" step="1" ' + attrs + ' value="' + esc(v) + '">'; break;
+    case 'D': ctl = '<input type="date" class="short" ' + attrs + ' value="' + esc(v) + '">'; break;
+    case 'H': ctl = '<input type="time" class="tm" ' + attrs + ' value="' + esc(v) + '">'; break;
+    case 'P': ctl = '<textarea ' + attrs + ' rows="' + (p[4] > 1000 ? 9 : 5) + '">' + esc(v) + '</textarea>' + (p[4] ? '<span class="cnt' + ((v || '').length > p[4] ? ' over' : '') + '" data-cnt="' + id + '" data-max="' + p[4] + '">' + (v || '').length + ' / ' + p[4] + ' znaków</span>' : ''); if (p[4] && (v || '').length > p[4]) msg = 'Tekst jest za długi.'; break;
+    case 'O': { const rows = orgRows(v); ctl = '<div class="orgs">' + rows.map((r, k) => orgRow(id, r, k, rows.length, tried[s])).join('') + '<datalist id="kraje"><option value="Polska"><option value="Francja"></datalist><button type="button" class="mini" data-oadd="' + id + '">+ Dodaj kolejny podmiot</button></div>'; msg = 'Przy każdym podmiocie zaznacz rolę. Przy „Inna rola” wpisz, jaka to rola.'; break; }
+    case 'R': { const arr = arrOf(v).length ? arrOf(v) : ['']; ctl = '<div class="rep">' + arr.map((x, k) => '<div class="rrow"><input type="url" data-f="' + id + '" data-ri="' + k + '"' + (k === 0 ? ' id="' + id + '"' + (p[3] ? ' aria-describedby="' + id + '_h"' : '') : '') + ' aria-label="' + esc(p[1]) + ', link ' + (k + 1) + '" placeholder="https://www.youtube.com/…" value="' + esc(x) + '">' + (arr.length > 1 || x ? '<button type="button" class="x" data-rdel="' + id + '" data-ri="' + k + '" aria-label="Usuń link ' + (k + 1) + '">×</button>' : '') + '</div>').join('') + '<button type="button" class="mini" data-radd="' + id + '">+ Dodaj kolejny link</button></div>'; msg = 'Wpisz pełny adres, np. https://www.youtube.com/…'; break; }
+    case 'L': ctl = '<select ' + attrs + '><option value="">Wybierz…</option>' + p[4].map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>'; break;
+    case 'G': ctl = '<table class="grid" aria-labelledby="' + id + '_l"><thead><tr><th><span class="sr">Udogodnienie</span></th>' + p[4].cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' + p[4].rows.map((r, k) => '<tr><td>' + esc(r) + '</td>' + p[4].cols.map((c, j) => '<td><input type="radio" name="' + id + '_' + k + '" data-f="' + id + '" data-r="' + k + '" value="' + j + '" aria-label="' + esc(r + ': ' + c) + '"' + (v && v[k] === j ? ' checked' : '') + '></td>').join('') + '</tr>').join('') + '</tbody></table>'; break;
+    case 'C': return (SEK[s].legal ? '<div class="legal" tabindex="0" aria-label="Nota prawna">' + NOTA.map(t => '<p>' + t + '</p>').join('') + '</div>' : '') + '<div class="field' + (bad ? ' err' : '') + '"><label class="check"><input type="checkbox" ' + attrs + (v ? ' checked' : '') + '><span>' + esc(p[4]) + ' <span class="star">*</span></span></label><span class="msg" id="' + id + '_e">Potwierdź oświadczenie, aby wysłać zgłoszenie.</span></div>';
+  }
+  const DEL = Object.values(ADD).find(a => a.to === p[1]); if (DEL) ctl += '<button type="button" class="mini addx" data-xdel="' + DEL.k + '">× ' + DEL.t.replace('+ Dodaj', 'Usuń') + '</button>';
+  if (ADD[p[1]]) ctl += '<button type="button" class="mini addx" data-xadd="' + ADD[p[1]].k + '"' + (SHOW[ADD[p[1]].to]() ? ' style="visibility:hidden" aria-hidden="true" tabindex="-1"' : '') + '>' + ADD[p[1]].t + '</button>';
+  const lbl = p[0] === 'K' ? '<span class="lbl" id="' + id + '_lb">' + esc(p[1]) + (p[2] ? ' <span class="star" aria-hidden="true">*</span>' : '') + '</span>' : p[0] === 'G' ? '<span class="lbl" id="' + id + '_l">' + esc(p[1]) + '</span>' : '<label class="lbl" id="' + id + '_lb" for="' + id + '">' + esc(p[1]) + (p[2] ? ' <span class="star" aria-hidden="true"' + (SEK[s].upload && i === 0 ? ' data-folderstar="1"' + (hasF() ? ' hidden' : '') : '') + '>*</span>' : '') + '</label>';
+  return '<div class="field' + (bad ? ' err' : '') + '">' + lbl + (p[3] ? '<span class="help" id="' + id + '_h">' + esc(p[3]) + '</span>' : (p[6] === 'h' ? '<span class="help" aria-hidden="true"></span>' : '')) + ctl + '<span class="msg" id="' + id + '_e">' + msg + '</span></div>';
+}
+function fieldsHtml(s) {
+  const ps = SEK[s].p; let h = '', i = 0;
+  const one = k => { let x = fieldHtml(s, k).replace('<div class="field', '<div data-vis="' + s + '_' + k + '"' + (vis(s, k) ? '' : ' hidden') + ' class="field'); return ps[k][1] === COMM ? sameHtml() + x : x; };
+  while (i < ps.length) {
+    if (MORE.indexOf(ps[i][1]) >= 0) { let inner = '', open = vals.x_more; while (i < ps.length && MORE.indexOf(ps[i][1]) >= 0) { if (has(ps[i][1])) open = true; inner += one(i); i++; } h += '<details class="more"' + (open ? ' open' : '') + '><summary>Treści dodatkowe (opcjonalnie)<span class="msub">Biogramy, teksty kuratorskie, cytaty, opis instytucji</span></summary>' + inner + '</details>'; continue; }
+    if (ps[i][6] === 'h' && ps[i + 1] && ps[i + 1][6] === 'h') { h += '<div class="two">' + one(i) + one(i + 1) + '</div>'; i += 2; }
+    else { h += one(i); i++; }
+  }
+  return h;
+}
+
+const fmOf = f => (vals.fm && vals.fm[f.name]) || {};
+const KINDS = { z: 'Zdjęcie', v: 'Wideo', g: 'Logotyp lub grafika', i: 'Inny plik' };
+const guess = f => /logo/i.test(f.name) || /\.(svg|ai|eps|pdf|psd|indd)$/i.test(f.name) ? 'g' : /^video\//.test(f.type || '') || /\.(mp4|mov|m4v|avi|mkv)$/i.test(f.name) ? 'v' : /^image\//.test(f.type || '') || /\.(jpe?g|png|tiff?|heic|webp)$/i.test(f.name) ? 'z' : 'i';
+const kindOf = f => fmOf(f).k || guess(f);
+const media = f => kindOf(f) === 'z' || kindOf(f) === 'v';
+const fmMissing = () => files.filter(f => ['queue', 'up', 'done'].indexOf(f.status) >= 0 && media(f) && (!(fmOf(f).a || '').trim() || !(fmOf(f).d || '').trim()));
+function filesHtml() {
+  if (!files.length) return '';
+  const n = files.filter(f => f.status === 'done').length;
+  const lab = { queue: 'W kolejce', done: 'Przesłano', big: 'Za duży plik, maks. ' + KONFIG.maxGB + ' GB' };
+  return '<div class="fsum">Przesłano ' + n + ' z ' + files.length + '</div><div class="fhint">Przy każdym pliku sprawdź rodzaj. Przy zdjęciach i filmach podaj autora i krótko opisz, co przedstawia. Opis wykorzystamy także jako tekst alternatywny dla osób niewidomych. Przy logotypach i grafikach autor nie jest potrzebny.</div><ul class="flist">' + files.map((f, k) => {
+    const ext = esc((f.name.split('.').pop() || '').toUpperCase().slice(0, 4));
+    const st = f.status === 'up' ? (f.pct || 0) + '%' : f.status === 'err' ? 'Błąd: ' + esc(f.msg || 'spróbuj ponownie') : lab[f.status];
+    const ok = ['queue', 'up', 'done'].indexOf(f.status) >= 0, m = fmOf(f), kd = kindOf(f), sh = tried[UP], nm = esc(f.name);
+    const inp = (key, lab, ph, req, span) => '<label' + (span ? ' style="grid-column:1/-1"' : '') + '>' + lab + (req ? ' *' : ' (opcjonalnie)') + '<input type="text" data-fm="' + nm + '" data-k="' + key + '" value="' + esc(m[key]) + '" placeholder="' + ph + '"' + (req && sh && !(m[key] || '').trim() ? ' class="bad"' : '') + '></label>';
+    const sel = '<label>Rodzaj<select data-fm="' + nm + '" data-k="k">' + Object.keys(KINDS).map(x => '<option value="' + x + '"' + (x === kd ? ' selected' : '') + '>' + KINDS[x] + '</option>').join('') + '</select></label>';
+    const meta = !ok ? '' : '<div class="fmeta">' + sel + (kd === 'z' || kd === 'v'
+      ? inp('a', 'Autor', 'np. Jan Kowalski', 1) + inp('d', 'Co przedstawia', kd === 'v' ? 'np. Zwiastun spektaklu, 30 s, poziomy' : 'np. Zespół na scenie podczas próby', 1)
+      : inp('d', kd === 'g' ? 'Czego dotyczy' : 'Opis', kd === 'g' ? 'np. Logo organizatora, wersja kolorowa' : 'np. Program wydarzenia', 0, 1)) + '</div>';
+    return '<li class="fi ' + f.status + '"><div class="th">' + (f.url ? '<img src="' + f.url + '" alt="">' : ext) + '</div>'
+      + '<div style="min-width:0"><div class="nm" title="' + esc(f.name) + '">' + esc(f.name) + '</div><div class="sz">' + fmt(f.size) + ' · <span id="s_' + f.key + '">' + st + '</span></div><div class="pbar"><i id="p_' + f.key + '" style="width:' + (f.status === 'done' ? 100 : (f.pct || 0)) + '%"></i></div></div>'
+      + (f.status === 'err' ? '<button class="mini" data-retry="' + k + '">Ponów</button>' : '<span></span>')
+      + (f.status !== 'up' ? '<button class="x" data-rm="' + k + '" aria-label="Usuń ' + esc(f.name) + '">×</button>' : '<span></span>') + meta + '</li>';
+  }).join('') + '</ul>';
+}
+const hasF = () => files.some(f => f.status === 'queue' || f.status === 'up' || f.status === 'done');
+function keep(sel, fb) { const y = window.scrollY; render(); window.scrollTo(0, y); const n = document.querySelector(sel) || (fb && document.querySelector(fb)); if (n) n.focus(); }
+function rerep(id, k) { const y = window.scrollY; render(); window.scrollTo(0, y); const n = [...document.querySelectorAll('[data-ri]')].find(x => x.dataset.f === id && +x.dataset.ri === k); if (n) n.focus(); }
+function drawFiles() { const el = $('files'); if (!el) return; const a = document.activeElement, k = a && a.dataset && a.dataset.fm ? [a.dataset.fm, a.dataset.k, a.selectionStart] : null; el.innerHTML = filesHtml(); if (k) { const n = [...el.querySelectorAll('[data-fm]')].find(x => x.dataset.fm === k[0] && x.dataset.k === k[1]); if (n) { n.focus(); try { n.setSelectionRange(k[2], k[2]); } catch (er) {} } } const st = document.querySelector('[data-folderstar]'); if (st) st.hidden = hasF(); }
+function setPct(it) { const p = $('p_' + it.key), s = $('s_' + it.key); if (p) p.style.width = it.pct + '%'; if (s) s.textContent = it.pct + '%'; }
+
+const BASE_TITLE = document.title;
+const smooth = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+function say(m) { const el = $('sr'); if (!el) return; el.textContent = ''; setTimeout(() => { el.textContent = m; }, 60); }
+function render() {
+  document.title = (cur === 0 ? 'Wstęp' : SEK[cur - 1].t + ' (' + cur + ' z ' + SEK.length + ')') + ' – ' + BASE_TITLE;
+  renderSteps();
+  let h = '';
+  if (cur === 0) {
+    h = '<div class="card"><div class="intro">'
+      + '<div><h3>Cel formularza</h3><p>Prosimy osoby odpowiedzialne za organizację i komunikację wydarzeń Sezonu Francja–Polska 2027 o przekazanie informacji potrzebnych do zaplanowania promocji i przedstawienia wydarzenia publiczności.</p></div>'
+      + '<div><h3>Gdzie wykorzystamy informacje</h3><p>Na podstawie odpowiedzi przygotujemy oficjalny program i informator Sezonu, treści na stronę internetową i do mediów społecznościowych, materiały prasowe oraz pozostałe materiały promocyjne.</p></div>'
+      + '<div><h3>Jak przesłać zgłoszenie</h3><p>Wypełnij formularz po polsku, osobno dla każdego wydarzenia. Dodatkowe terminy i miejsca tego samego wydarzenia wpisz w jednym zgłoszeniu. Zachowaj oficjalną pisownię nazw własnych i adresów. W razie problemów technicznych wypełnij plik Excel z pytaniami, dołączony do wiadomości z linkiem do formularza, i odeślij go na adres ' + mailLink() + '.</p></div>'
+      + '<div><h3>Jak udostępnić pliki</h3><p>Wszystkie pliki, w tym wideo, dodasz w sekcji „Materiały promocyjne”. Przesyłają się od razu, jeszcze przed wysłaniem zgłoszenia. W nazwach zdjęć i filmów uwzględnij osoby lub obiekty przedstawione w materiale oraz autorstwo.</p></div>'
+      + '</div></div>'
+      + '<div class="card"><div class="field' + (tried.email && emailBad() ? ' err' : '') + '"><label class="lbl" for="email">Twój adres e-mail <span class="star" aria-hidden="true">*</span></label><span class="help" id="email_h">Wyślemy na niego potwierdzenie zgłoszenia i, jeśli zechcesz, link do dokończenia formularza.</span><input type="email" id="email" data-f="email" aria-required="true" aria-describedby="email_h" value="' + esc(vals.email) + '" autocomplete="email"><span class="msg" role="alert">Wpisz poprawny adres e-mail.</span></div>'
+      + '<p style="margin:22px 0 0;font-size:15px">Wypełnianie zajmuje ok. 20–30 minut. Odpowiedzi zapisują się na bieżąco w tej przeglądarce. Przycisk „Zapisz i dokończ później” wyśle Ci link, którym wrócisz do formularza na dowolnym urządzeniu.</p></div>'
+      + '<div class="nav"><span></span><button class="btn" data-next="1">Rozpocznij →</button></div>';
+  } else {
+    const s = cur - 1, S = SEK[s], miss = 0, last = cur === PAGES.length - 1;
+    h = '<div class="card"><div class="kicker">Sekcja ' + cur + ' z ' + SEK.length + '</div><h2 tabindex="-1">' + esc(S.t) + '</h2><p class="req-note">Pola oznaczone <span class="star" style="color:var(--err)">*</span> są wymagane.</p>'
+      + (miss ? '<div class="alert" role="alert" id="errsum"><div>Uzupełnij lub popraw ' + (miss === 1 ? 'pole' : 'pola') + ' (' + miss + '):</div><ul>' + missingOn(s).map(i => '<li><a href="#' + fid(s, i) + '" data-jump="' + fid(s, i) + '">' + esc(SEK[s].p[i][1]) + '</a></li>').join('') + '</ul></div>' : '');
+    if (S.upload) {
+      h += '<details class="info"><summary>Jakie materiały przekazać</summary>' + MATERIALY.map(t => '<p>' + t + '</p>').join('') + '</details>'
+        + '<div class="drop" id="drop" tabindex="0" role="button" aria-describedby="dropH"><b>Przeciągnij tutaj zdjęcia, wideo, logotypy i grafiki</b><span id="dropH">albo kliknij, aby wybrać pliki · do ' + KONFIG.maxPlikow + ' plików, maks. ' + KONFIG.maxGB + ' GB każdy · pliki przesyłają się od razu</span><input type="file" id="fi" multiple hidden></div>'
+        + '<div id="files">' + filesHtml() + '</div><div style="height:28px"></div>';
+    }
+    h += fieldsHtml(s) + '</div><div class="miss-note" id="missNote" aria-live="polite"></div><div class="nav">'
+      + '<button class="btn sec" data-go="' + (cur - 1) + '">← Wstecz</button><div class="nav-r"><button class="btn ghost" id="later">Zapisz i dokończ później</button>'
+      + (last ? '<button class="btn" id="send">Wyślij zgłoszenie</button>' : '<button class="btn" data-next="1">Dalej →</button>') + '</div></div>';
+  }
+  $('page').innerHTML = h;
+  updMiss();
+  bindDrop();
+}
+
+function go(k) {
+  if (cur > 0) left[cur - 1] = true;
+  cur = k; visited[k] = true; render(); window.scrollTo({ top: 0, behavior: smooth() });
+  setTimeout(() => { const f = document.querySelector('.field.err input, .field.err textarea, .field.err select'); if (f) f.focus(); else { const h2 = $('page').querySelector('h2'); if (h2) h2.focus(); } }, 60);
+}
+function syncServer() { if (token && !DEMO) api('save', { token: token, email: vals.email, vals: vals }).catch(() => {}); }
+
+/* ---------- zdarzenia ---------- */
+document.addEventListener('mousedown', e => { if (e.target.closest('.rbtn')) e.preventDefault(); });
+function rtbSync() { document.querySelectorAll('.rbtn').forEach(b => { const ed = b.closest('.rwrap').querySelector('.rich'); let on = false; try { on = document.activeElement === ed && document.queryCommandState(b.dataset.cmd); } catch (er) {} b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); }
+document.addEventListener('selectionchange', rtbSync);
+document.addEventListener('click', e => {
+  const xd = e.target.closest('[data-xdel]'); if (xd) { const a = Object.values(ADD).find(x => x.k === xd.dataset.xdel), el = $(IDX[a.to]); vals[a.k] = 0; vals[IDX[a.to]] = ''; if (el) el.value = ''; persist(); const b = document.querySelector('[data-xadd="' + a.k + '"]'); if (b) b.focus(); say(a.t.replace('+ Dodaj', 'Usunięto').replace('drugą', 'drugą').replace('drugi', 'drugi') + '.'); return; }
+  const xa = e.target.closest('[data-xadd]'); if (xa) { vals[xa.dataset.xadd] = 1; persist(); const a = Object.values(ADD).find(x => x.k === xa.dataset.xadd), el = $(IDX[a.to]); if (el) el.focus(); return; }
+  const rb = e.target.closest('.rbtn'); if (rb) { const ed = rb.closest('.rwrap').querySelector('.rich'); ed.focus(); try { document.execCommand('styleWithCSS', false, false); } catch (er) {} document.execCommand(rb.dataset.cmd); rtbSync(); return; }
+  const j = e.target.closest('[data-jump]'); if (j) { e.preventDefault(); const el = $(j.dataset.jump); if (el) { el.focus({ preventScroll: true }); el.scrollIntoView ? window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 160, behavior: smooth() }) : 0; } return; }
+  const g = e.target.closest('[data-go]'); if (g) { if (+g.dataset.go > 0 && emailBad()) { tried.email = true; go(0); say('Najpierw podaj adres e-mail.'); return; } go(+g.dataset.go); return; }
+  if (e.target.closest('[data-next]')) {
+    if (cur === 0) { tried.email = true; if (emailBad()) { render(); const f = $('email'); if (f) f.focus(); return; } }
+    else { tried[cur - 1] = true; if (missingOn(cur - 1).length) { render(); const f = document.querySelector('.field.err input, .field.err textarea, .field.err select'); if (f) f.focus(); return; } }
+    syncServer(); go(cur + 1); return;
+  }
+  const rt = e.target.closest('[data-retry]'); if (rt) { const f = files[+rt.dataset.retry]; f.status = 'queue'; f.pct = 0; drawFiles(); pump(); return; }
+  const rm = e.target.closest('[data-rm]');
+  if (rm) {
+    const f = files.splice(+rm.dataset.rm, 1)[0];
+    if (f.url) URL.revokeObjectURL(f.url);
+    if (f.status === 'done' && f.id && token && !DEMO) api('removeFile', { token: token, id: f.id }).catch(() => {});
+    drawFiles(); persist(); return;
+  }
+  const oa = e.target.closest('[data-oadd]');
+  if (oa) { const id = oa.dataset.oadd, rows = orgRows(vals[id]); rows.push({ n: '', c: '', r: [], o: '' }); vals[id] = rows; persist(); keep('[data-f="' + id + '"][data-oi="' + (rows.length - 1) + '"][data-ok="n"]'); return; }
+  const od = e.target.closest('[data-odel]');
+  if (od) { const id = od.dataset.odel, rows = orgRows(vals[id]); rows.splice(+od.dataset.oi, 1); vals[id] = rows; persist(); keep('[data-oadd="' + id + '"]'); return; }
+  const om = e.target.closest('[data-omv]');
+  if (om) { const id = om.dataset.omv, k = +om.dataset.oi, j = k + +om.dataset.d, rows = orgRows(vals[id]); const tmp = rows[k]; rows[k] = rows[j]; rows[j] = tmp; vals[id] = rows; persist(); keep('[data-omv="' + id + '"][data-oi="' + j + '"][data-d="' + om.dataset.d + '"]', '[data-f="' + id + '"][data-oi="' + j + '"][data-ok="n"]'); return; }
+  const ra = e.target.closest('[data-radd]');
+  if (ra) { const id = ra.dataset.radd, a = arrOf(vals[id]).slice(); if (!a.length) a.push(''); a.push(''); vals[id] = a; persist(); rerep(id, a.length - 1); return; }
+  const rd = e.target.closest('[data-rdel]');
+  if (rd) { const id = rd.dataset.rdel, a = arrOf(vals[id]).slice(); a.splice(+rd.dataset.ri, 1); vals[id] = a.length ? a : ['']; persist(); rerep(id, Math.min(+rd.dataset.ri, vals[id].length - 1)); return; }
+  if (e.target.closest('#later')) { saveLater(); return; }
+  if (e.target.closest('#send')) send();
+});
+
+/* ---------- pole z formatowaniem (biogramy) ---------- */
+const BLOCK = /^(P|DIV|LI|H[1-6]|TR|BLOCKQUOTE)$/;
+function fmtOf(el, b, i) {
+  const st = el.style || {}, fw = st.fontWeight, tg = el.tagName;
+  if (tg === 'B' || tg === 'STRONG') b = !(fw === 'normal' || fw === '400');
+  else if (fw) b = fw === 'bold' || +fw >= 600;
+  if (tg === 'I' || tg === 'EM') i = true; else if (st.fontStyle) i = st.fontStyle === 'italic';
+  return [b, i];
+}
+function richParse(root) {
+  let text = ''; const segs = [];
+  const nl = () => { if (text && !text.endsWith('\n')) text += '\n'; };
+  (function walk(n, b, i) {
+    if (n.nodeType === 3) {
+      const t = n.nodeValue.replace(/[\r\n\t]+/g, ' ').replace(/\u00a0/g, ' ');
+      if (!t) return;
+      const s = text.length; text += t;
+      if (b || i) segs.push([s, text.length, b ? 1 : 0, i ? 1 : 0]);
+      return;
+    }
+    if (n.nodeType !== 1 || /^(STYLE|SCRIPT|META|TITLE)$/.test(n.tagName)) return;
+    if (n.tagName === 'BR') { text += '\n'; return; }
+    const f = fmtOf(n, b, i), blk = BLOCK.test(n.tagName);
+    if (blk) nl();
+    n.childNodes.forEach(c => walk(c, f[0], f[1]));
+    if (blk) nl();
+  })(root, false, false);
+  const end = text.replace(/\s+$/, '').length;
+  return { text: text.slice(0, end), segs: segs.map(r => [r[0], Math.min(r[1], end), r[2], r[3]]).filter(r => r[1] > r[0]) };
+}
+function richHtml(text, segs) {
+  let h = '';
+  for (let k = 0; k < text.length; k++) {
+    const sg = (segs || []).find(r => k >= r[0] && k < r[1]) || [0, 0, 0, 0], c = text[k];
+    h += c === '\n' ? '<br>' : (sg[2] ? '<b>' : '') + (sg[3] ? '<i>' : '') + esc(c) + (sg[3] ? '</i>' : '') + (sg[2] ? '</b>' : '');
+  }
+  return h.replace(/<\/b><b>/g, '').replace(/<\/i><i>/g, '') + (text.endsWith('\n') ? '<br>' : '');
+}
+document.addEventListener('paste', e => {
+  const el = e.target.closest && e.target.closest('.rich'); if (!el) return;
+  e.preventDefault();
+  const html = e.clipboardData.getData('text/html'), plain = e.clipboardData.getData('text/plain');
+  let out;
+  if (html) { const d = new DOMParser().parseFromString(html, 'text/html'); const r = richParse(d.body); out = richHtml(r.text, r.segs); }
+  else out = esc(plain).replace(/\r?\n/g, '<br>');
+  document.execCommand('insertHTML', false, out);
+});
+document.addEventListener('keydown', e => {
+  const el = e.target.closest && e.target.closest('.rich'); if (!el) return;
+  if ((e.ctrlKey || e.metaKey) && /^[iu]$/i.test(e.key) && e.key.toLowerCase() === 'u') e.preventDefault();
+});
+document.addEventListener('input', e => {
+  if (e.target.classList && e.target.classList.contains('rich')) { const t = e.target, r = richParse(t); vals[t.dataset.f] = r.text; vals[t.dataset.f + '_r'] = r.segs; const fl = t.closest('.field'); if (fl) fl.classList.remove('err'); persist(); return; }
+  if (e.target.dataset.fm) { const t = e.target; vals.fm = vals.fm || {}; vals.fm[t.dataset.fm] = Object.assign({}, vals.fm[t.dataset.fm], { [t.dataset.k]: t.value }); if (t.value.trim()) t.classList.remove('bad'); persist(); if (t.dataset.k === 'k') drawFiles(); return; }
+  if (e.target.dataset.x) { vals[e.target.dataset.x] = e.target.checked; persist(); return; }
+  const t = e.target, id = t.dataset.f; if (!id) return;
+  if (id === 'email') renderSteps();
+  if (t.dataset.kc != null || t.dataset.ko) {
+    const sp = Object.keys(IDX).find(l => IDX[l] === id), a = id.slice(1).split('_'), p = SEK[+a[0]].p[+a[1]], o = kv(vals[id]);
+    if (t.dataset.ko) o.o = t.value;
+    else { const cur = o.sel.map(x => x === '__inne' ? p[4].other : x); o.sel = p[4].opts.filter(x => x === t.dataset.kc ? t.checked : cur.indexOf(x) >= 0); }
+    vals[id] = o; const ow = $(id + '_ow'); if (ow) ow.hidden = o.sel.indexOf(p[4].other) < 0;
+    const fl = t.closest('.field'); if (fl) fl.classList.remove('err'); persist(); return;
+  }
+  if (t.dataset.oi != null) {
+    const rows = orgRows(vals[id]), r = rows[+t.dataset.oi];
+    if (t.dataset.ok === 'r') { r.r = t.checked ? r.r.concat([t.value]) : r.r.filter(x => x !== t.value); const ch = t.closest('.chips'); if (ch && r.r.length) ch.classList.remove('bad'); if (t.value === 'Inna rola') setTimeout(() => keep('[data-f="' + id + '"][data-oi="' + t.dataset.oi + '"][data-ok="' + (t.checked ? 'o' : 'r') + '"]'), 0); }
+    else { r[t.dataset.ok] = t.value; if (t.value.trim()) t.classList.remove('bad'); }
+    vals[id] = rows;
+  }
+  else if (t.dataset.ri != null) { const a = arrOf(vals[id]).slice(); if (!a.length) a.push(''); a[+t.dataset.ri] = t.value; vals[id] = a; }
+  else if (t.type === 'radio') { vals[id] = vals[id] || {}; vals[id][t.dataset.r] = +t.value; }
+  else if (t.type === 'checkbox') vals[id] = t.checked;
+  else vals[id] = t.value;
+  const c = document.querySelector('[data-cnt="' + id + '"]');
+  if (c) { const n = t.value.length, max = +c.dataset.max; c.textContent = n + ' / ' + max + ' znaków'; c.classList.toggle('over', n > max); }
+  const fld = t.closest('.field'); if (fld) fld.classList.remove('err');
+  persist();
+});
+
+/* ---------- pliki ---------- */
+function addFiles(list) {
+  let skipped = 0;
+  Array.from(list).forEach(f => {
+    if (files.length >= KONFIG.maxPlikow || !f.size) { skipped++; return; }
+    files.push({ key: rk(), file: f, name: f.name, size: f.size, type: f.type || 'application/octet-stream', status: f.size > KONFIG.maxGB * 1073741824 ? 'big' : 'queue', pct: 0, url: /^image\/(jpeg|png|gif|webp)/.test(f.type) ? URL.createObjectURL(f) : '' });
+  });
+  if (skipped) toast('Pominięto pliki: ' + skipped + ' (puste lub ponad limit ' + KONFIG.maxPlikow + ' plików).', 1);
+  drawFiles(); pump();
+}
+function pump() {
+  while (uploading < 2) {
+    const it = files.find(f => f.status === 'queue'); if (!it) break;
+    uploading++; it.status = 'up'; it.pct = 0; drawFiles();
+    upload(it).then(() => { it.status = 'done'; it.pct = 100; say('Przesłano plik ' + it.name + '.'); }).catch(err => { it.status = 'err'; it.msg = err.message; say('Błąd przesyłania pliku ' + it.name + ': ' + err.message + '.'); })
+      .finally(() => { uploading--; drawFiles(); persist(); pump(); });
+  }
+}
+async function upload(it) {
+  if (!it.file) throw new Error('Dodaj plik ponownie');
+  await ensureToken();
+  if (DEMO) { for (let p = 0; p <= 100; p += 5) { it.pct = p; setPct(it); await new Promise(r => setTimeout(r, Math.min(300, 40 + it.size / 4e6))); } it.id = 'demo'; return; }
+  let url = null;
+  try { url = (await api('upload', { token: token, name: it.name, type: it.type, size: it.size })).url; }
+  catch (e) { if (it.size > SMALL) throw e; }
+  if (url) {
+    try { it.id = await putChunks(url, it); return; }
+    catch (e) { if (it.size > SMALL || e.status) throw e; }
+  }
+  it.pct = 50; setPct(it);
+  it.id = (await api('uploadSmall', { token: token, name: it.name, type: it.type, data: await b64(it.file) })).id;
+}
+function putChunks(url, it) {
+  const CH = 16 * 1048576, size = it.size;
+  return new Promise((ok, ko) => {
+    let start = 0, tries = 0;
+    const next = () => {
+      const end = Math.min(start + CH, size), x = new XMLHttpRequest();
+      x.open('PUT', url);
+      x.setRequestHeader('Content-Range', 'bytes ' + start + '-' + (end - 1) + '/' + size);
+      x.upload.onprogress = e => { it.pct = Math.min(99, Math.round((start + e.loaded) / size * 100)); setPct(it); };
+      x.onload = () => {
+        if (x.status === 308) { start = end; tries = 0; next(); }
+        else if (x.status === 200 || x.status === 201) { try { ok(JSON.parse(x.responseText).id); } catch (e) { ok(''); } }
+        else if (x.status >= 500 && tries++ < 3) setTimeout(next, 1500 * tries);
+        else { const er = new Error('serwer odrzucił plik (' + x.status + ')'); er.status = x.status; ko(er); }
+      };
+      x.onerror = () => {
+        if (start > 0 && tries++ < 5) setTimeout(next, 2000 * tries);
+        else { const er = new Error('brak połączenia'); er.status = 0; ko(er); }
+      };
+      x.send(it.file.slice(start, end));
+    };
+    next();
+  });
+}
+const b64 = f => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1]); r.onerror = ko; r.readAsDataURL(f); });
+function bindDrop() {
+  const d = $('drop'); if (!d) return; const fi = $('fi');
+  d.addEventListener('click', () => fi.click());
+  d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fi.click(); } });
+  fi.addEventListener('change', () => { addFiles(fi.files); fi.value = ''; });
+  ['dragenter', 'dragover'].forEach(ev => d.addEventListener(ev, e => { e.preventDefault(); d.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => d.addEventListener(ev, e => { e.preventDefault(); d.classList.remove('over'); }));
+  d.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+}
+
+/* ---------- zapis, wysyłka ---------- */
+async function saveLater() {
+  if (emailBad()) { tried.email = true; go(0); return; }
+  try {
+    await ensureToken();
+    await api('save', { token: token, email: vals.email, vals: vals, link: true });
+    persist();
+    toast('Wysłaliśmy link do dokończenia formularza na adres ' + vals.email + '. Przesłane pliki są zapisane.');
+  } catch (err) { toast('Nie udało się zapisać: ' + err.message, 1); }
+}
+async function send() {
+  tried.email = true; SEK.forEach((_, s) => { tried[s] = true; });
+  if (emailBad()) { go(0); return; }
+  const bad = SEK.findIndex((_, s) => missingOn(s).length);
+  if (bad >= 0) { go(bad + 1); return; }
+  if (files.some(f => f.status === 'queue' || f.status === 'up')) { go(UP + 1); toast('Poczekaj, aż wszystkie pliki się prześlą.', 1); return; }
+  if (files.some(f => f.status === 'err' || f.status === 'big')) { go(UP + 1); toast('Usuń pliki oznaczone na czerwono albo ponów ich przesyłanie.', 1); return; }
+  const ov = $('ov'); $('ovS').textContent = 'To potrwa kilka sekund.'; ov.classList.add('on'); ov.querySelector('.box').focus();
+  try {
+    await ensureToken();
+    const pola = [];
+    SEK.forEach((S, s) => S.p.forEach((p, i) => p[0] !== 'S' && pola.push(Object.assign({ t: p[1], v: value(s, i), tl: !!p[5] }, p[0] === 'B' && vals[fid(s, i) + '_r'] ? { r: vals[fid(s, i) + '_r'] } : {}))));
+    const plikiMeta = files.filter(f => f.status === 'done').map(f => { const m = fmOf(f); const kd = kindOf(f); return { name: f.name, r: KINDS[kd], a: kd === 'z' || kd === 'v' ? m.a || '' : '', d: m.d || '' }; });
+    const res = await api('submit', { token: token, email: vals.email, pola: pola, plikiMeta: plikiMeta });
+    const tytul = value(0, 0);
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    ov.classList.remove('on');
+    done(res.nr, tytul);
+  } catch (err) {
+    ov.classList.remove('on');
+    toast('Nie udało się wysłać zgłoszenia: ' + err.message + ' Odpowiedzi są zapisane, spróbuj ponownie za chwilę.', 1);
+  }
+}
+function done(nr, tytul) {
+  $('steps').innerHTML = ''; $('bar').style.display = 'none';
+  document.title = 'Zgłoszenie wysłane – ' + BASE_TITLE; $('page').innerHTML = '<div class="card"><div class="done-ic">✓</div><h2 tabindex="-1">Dziękujemy!</h2><p style="font-size:19px;margin:16px 0 0">Zgłoszenie <b>„' + esc(tytul) + '”</b> zostało wysłane (nr ' + esc(nr) + '). Potwierdzenie wysłaliśmy na adres <b>' + esc(vals.email) + '</b>.</p><p style="margin:12px 0 0">Masz kolejne wydarzenie? Kliknij przycisk poniżej. Organizatorzy, strony, media społecznościowe i kontakty uzupełnią się na podstawie tego zgłoszenia. Poprawki prześlij na adres ' + mailLink() + ', podając numer zgłoszenia.</p><div style="margin-top:28px"><button class="btn sec" id="again">Zgłoś kolejne wydarzenie</button></div></div>';
+  $('page').querySelector('h2').focus();
+  $('again').onclick = () => { const nv = { email: vals.email, x_same: vals.x_same }; ['Organizatorzy, współorganizatorzy i partnerzy', 'Strona organizatora', 'Media społecznościowe, wspólne publikacje i inne linki', 'Kontakt do osoby zarządzającej projektem', COMM].forEach(l => { if (vals[IDX[l]] != null) nv[IDX[l]] = vals[IDX[l]]; }); vals = nv; files = []; token = null; tried = {}; visited = { 0: true }; persist(); $('bar').style.display = ''; go(1); };
+  window.scrollTo({ top: 0 });
+}
+
+function gate(msg) {
+  $('steps').innerHTML = ''; $('bar').style.display = 'none';
+  $('page').innerHTML = '<div class="card" style="max-width:600px"><h2 tabindex="-1">Dostęp do formularza</h2><p style="margin:8px 0 24px">Formularz jest przeznaczony dla organizatorów wydarzeń Sezonu. Wpisz hasło z wiadomości od zespołu Sezonu.</p><form id="gate" novalidate><div class="field' + (msg ? ' err' : '') + '"><label class="lbl" for="pw">Hasło</label><input type="password" id="pw" autocomplete="current-password" aria-describedby="pwm"><span class="msg" id="pwm" role="alert">' + esc(msg || '') + '</span></div><div class="nav"><span></span><button class="btn" type="submit" id="pwb">Wejdź →</button></div></form><p style="margin:20px 0 0;font-size:15px">Nie masz hasła? Napisz na adres ' + mailLink() + '.</p></div>';
+  const pw = $('pw'); pw.focus();
+  $('gate').onsubmit = async e => {
+    e.preventDefault();
+    const v = pw.value.trim(); if (!v) { gate('Wpisz hasło.'); return; }
+    $('pwb').disabled = true; $('pwb').textContent = 'Sprawdzanie…';
+    pass = v;
+    try { await api('check', {}); try { localStorage.setItem('sezon2027_formularz_haslo', v); } catch (er) {} $('bar').style.display = ''; init(); }
+    catch (err) { pass = ''; gate(err.message); }
+  };
+}
+function sieroty(root) {
+  if (!root) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentNode && n.parentNode.closest('textarea,script,style') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const re = /(^|[\s(„])([aiouwzAIOUWZ])[ \t\n]+/g; let n;
+  while ((n = w.nextNode())) { const t = n.nodeValue.replace(re, '$1$2\u00A0').replace(re, '$1$2\u00A0'); if (t !== n.nodeValue) n.nodeValue = t; }
+}
+SEK.forEach((S, s) => S.p.forEach((p, i) => { const k = fid(s, i); if (p[0] === 'P' && Array.isArray(vals[k])) vals[k] = orgRows(vals[k]).filter(r => r.n.trim()).map(r => r.n.trim() + (r.c.trim() ? ' (' + r.c.trim() + ')' : '') + (r.r.length ? ' – ' + r.r.join(', ') : '')).join('\n'); }));
+sieroty(document.body);
+new MutationObserver(() => sieroty(document.body)).observe(document.body, { childList: true, subtree: true });
+async function init() {
+  if (!DEMO && !pass) { gate(); return; }
+  const sz = new URLSearchParams(location.search).get('szkic');
+  if (sz) {
+    try {
+      const r = await api('load', { token: sz });
+      if (r) { token = sz; vals = Object.assign({}, r.vals); files = (r.files || []).map(f => Object.assign({}, f, { key: rk(), status: 'done', pct: 100 })); persist(); toast('Wczytaliśmy zapisany formularz nr ' + r.nr + '.'); }
+    } catch (err) { toast(err.message, 1); }
+    history.replaceState(null, '', location.pathname);
+  }
+  render();
+}
+init();
+</script>
+</body>
+</html>
