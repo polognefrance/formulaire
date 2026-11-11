@@ -194,6 +194,14 @@ h2[tabindex]:focus{outline:none}
 .rrow{display:flex;gap:10px;align-items:center}
 .rrow input{flex:1;min-width:0}
 .orgs{display:flex;flex-direction:column;gap:12px}
+.mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mgrid.full{grid-template-columns:minmax(0,1fr)}
+.mgrid.addr{grid-template-columns:minmax(0,140px) minmax(0,1fr)}
+.orow .mrow-in input{padding:10px 12px;font-size:15px}
+.orow label.mcheck{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;gap:10px;font-size:15px;font-weight:600;cursor:pointer}
+.mcheck input{width:20px;height:20px;margin:0;accent-color:var(--brown)}
+.macts{display:flex;flex-direction:column;gap:6px}
+@media (max-width:640px){.mgrid,.mgrid.addr{grid-template-columns:minmax(0,1fr)}}
 .orow{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:14px;align-items:start;border:1.5px solid var(--line);border-radius:16px;padding:16px;background:#fff}
 .onum{width:32px;height:32px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .obody{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -244,7 +252,7 @@ const KONFIG = {
   apiUrl: 'https://script.google.com/macros/s/AKfycbw8CidrLcO-rhhmw9O2m0Cx6h_cvF7TXqPO__Se-Mq85ou6oroBkpGsg5HnTmmZNfPo/exec', // adres Apps Script konta Sezonu
   logoUrl: 'logo.png',   // plik logo w repozytorium; zmiana logo = wgranie nowego pliku logo.png
   emailKontakt: 'sezon2027@iam.pl', // adres pokazywany partnerom
-  maxGB: 5, maxPlikow: 40
+  maxMB: 50, maxPlikow: 40
 };
 
 const DYS = ['Architektura, urbanistyka i krajobraz','Praktyki artystyczne i społeczności','Muzyka klasyczna','Muzyka współczesna','Dziedzictwo kulturowe','Kultura, gospodarka, innowacje i technologie','Debata','Design, moda i rzemiosło','Edukacja','Film i sztuki audiowizualne (w tym sztuka wideo)','Gastronomia','Szkolnictwo wyższe i kultura naukowa','Literatura i komiks','Sztuki performatywne (teatr, taniec, cyrk i lalkarstwo)','Fotografia','Muzyka popularna i jazz','Sport','Gry wideo i twórczość cyfrowa (w tym rzeczywistość wirtualna)','Sztuki wizualne (w tym sztuka współczesna)'];
@@ -271,7 +279,7 @@ const SEK = [
   ['T','Tytuł wydarzenia',1,'Podaj oficjalny tytuł do publikacji.',0,1],
   ['T','Podtytuł wydarzenia',0,'Podaj podtytuł, jeśli dotyczy.',0,1],
   ['T','Nazwa projektu nadrzędnego',0,'Jeśli wydarzenie jest częścią większego projektu, festiwalu lub cyklu, podaj jego nazwę.',0,1],
-  ['P','Organizatorzy, współorganizatorzy i partnerzy',1,'Wymień polskiego organizatora, francuskiego partnera i pozostałe osoby lub podmioty do uwzględnienia w materiałach. Podaj nazwę lub imię i nazwisko, kraj oraz rolę. Zachowaj kolejność do publikacji i podaj każdy wpis w osobnym wierszu. Kilka ról tego samego podmiotu wpisz w jednym wierszu.',0,1],
+  ['Q','Organizatorzy, współorganizatorzy i partnerzy',1,'Wymień podmioty i osoby do uwzględnienia w materiałach, w kolejności do publikacji. Przy każdym podaj nazwę, kraj i rolę. Enter dodaje kolejny wiersz.',0,1],
   ['L','Główna dyscyplina',1,'Wybierz główną dyscyplinę wydarzenia.',DYS,0,'h'],
   ['L','Dodatkowa dyscyplina',0,'Wybierz drugą dyscyplinę, jeśli dotyczy.',DYS,0,'h'],
   ['L','Główny format wydarzenia',1,'Wybierz główny format wydarzenia.',FOR,0,'h'],
@@ -280,8 +288,8 @@ const SEK = [
   ['K','Języki wydarzenia',0,'Zaznacz języki używane podczas wydarzenia.',{ opts: ['polski','francuski','angielski','bez języka mówionego','inny'], other: 'inny', q: 'Jaki język?' },1],
   ['P','Krótki opis wydarzenia',1,'Napisz wprowadzenie dla publiczności. Maksymalnie 3 zdania i 600 znaków.',600,1],
   ['P','Szczegółowy opis wydarzenia',1,'Opisz wydarzenie na potrzeby publikacji. Maksymalnie 15 zdań i 1600 znaków.',1600,1],
-  ['P','Artyści, kuratorzy i pozostałe osoby uczestniczące w programie',1,'Wymień osoby w kolejności do publikacji, po jednej w każdym wierszu. Przy każdym nazwisku podaj rolę. Jeśli wydarzenie nie ma imiennie wskazanych osób, wpisz „Nie dotyczy”.',0,1],
-  ['B','Biogramy osób uczestniczących',0,'Podaj krótkie biogramy podpisane imieniem i nazwiskiem lub wklej link do pliku z biogramami. Pogrubienie i kursywa zachowują się przy wklejaniu z Worda lub Dokumentów Google. Możesz też zaznaczyć tekst i użyć przycisków nad polem: B (pogrubienie) lub I (kursywa).',0,1],
+  ['Q','Artyści, kuratorzy i pozostałe osoby uczestniczące w programie',1,'Wymień osoby w kolejności do publikacji. Przy każdym nazwisku podaj rolę. Enter dodaje kolejny wiersz.',{ ph: ['np. Anna Kowalska – reżyserka', 'np. Jean Dupont – kurator'], add: '+ Dodaj kolejną osobę', none: 'Wydarzenie nie ma imiennie wskazanych osób' },1],
+  ['B','Biogramy osób uczestniczących',0,'Podaj krótkie biogramy podpisane imieniem i nazwiskiem lub wklej link do pliku z biogramami.',0,1],
   ['P','Dodatkowe treści do publikacji',0,'Dodaj tekst kuratorski, cytaty lub opis instytucji. Możesz również podać link do pliku PDF.',0,1]
  ]},
  { t: 'Terminy i miejsca', p: [
@@ -295,7 +303,7 @@ const SEK = [
   ['T','Miejscowość',1,'',0,0,'h'],
   ['T','Kraj',1,'Podaj nazwę kraju po polsku.'],
   ['P','Pokaz przedpremierowy, otwarcie i zamknięcie',0,'Wskaż, czy planowany jest pokaz przedpremierowy, wernisaż, uroczyste otwarcie lub finisaż. Podaj rodzaj, datę i godzinę każdego punktu oraz miejsce, jeśli jest inne niż główne miejsce wydarzenia.',0,1],
-  ['P','Dodatkowe terminy i miejsca',0,'Każdy dodatkowy termin lub miejsce wpisz w osobnym wierszu. Podaj daty, lokalne godziny rozpoczęcia i zakończenia, nazwę miejsca, ulicę i numer, kod pocztowy, miejscowość, kraj oraz współrzędne, jeśli są dostępne.']
+  ['M','Dodatkowe terminy i miejsca',0,'Dodaj osobno każdy kolejny termin lub miejsce. Jeśli wydarzenie odbywa się w tym samym miejscu co główne, wystarczy data i godzina.']
  ]},
  { t: 'Wstęp i dostępność', p: [
   ['L','Sposób wstępu',0,'Wybierz sposób wstępu. Jeśli to potrzebne, pojawią się pola na ceny, link i datę sprzedaży.',WST],
@@ -307,7 +315,7 @@ const SEK = [
   ['P','Dodatkowe informacje o dostępności',0,'Podaj praktyczne informacje o udogodnieniach, np. zasady dostępu, język napisów lub tłumaczenia oraz terminy, w których dana usługa będzie dostępna. Możesz dodać link ze szczegółami.',0,1]
  ]},
  { t: 'Materiały promocyjne', upload: true, p: [
-  ['U','Folder z materiałami promocyjnymi',1,'Jeśli nie dodajesz plików powyżej albo część materiałów jest w innym miejscu (Dysk, WeTransfer, Dropbox), wklej link do folderu i upewnij się, że zespół Sezonu ma do niego dostęp. W nazwie folderu podaj tytuł wydarzenia i nazwę organizatora.'],
+  ['U','Folder z materiałami promocyjnymi',1,'Wklej link do folderu z wideo i plikami powyżej 50 MB (Dysk Google, WeTransfer, Dropbox). Upewnij się, że zespół Sezonu ma do niego dostęp. Pole nie jest wymagane, jeśli wszystkie pliki zostały dodane powyżej. W nazwie folderu podaj tytuł wydarzenia i nazwę organizatora.'],
   ['P','Opisy plików z folderu',0,'Wymagane, jeśli podajesz link do folderu powyżej. Przy każdym pliku podaj nazwę, autora i co przedstawia, każdy plik w osobnym wierszu. Dla wideo dodaj czas trwania, orientację i języki napisów. Możesz też wkleić link do wykazu plików.',0,1],
   ['P','Ograniczenia w wykorzystaniu materiałów',0,'Opisz ograniczenia, jeśli są, np. tylko do materiałów prasowych, do określonej daty, bez kadrowania albo z obowiązkowym podpisem twórcy przedstawionego dzieła.',0,1],
   ['R','Publiczne linki do wideo',0,'Podaj linki YouTube lub Vimeo do filmów, które można osadzić na stronie wydarzenia.']
@@ -369,7 +377,7 @@ function ensureToken() {
 const doneFiles = () => files.filter(f => f.status === 'done').map(f => ({ id: f.id, name: f.name, size: f.size, type: f.type }));
 function updMiss() {
   const el = $('missNote'); if (!el || cur < 1) return;
-  const n = tried[cur - 1] ? missingOn(cur - 1).length : 0;
+  const n = tried[cur - 1] ? missN(cur - 1) : 0;
   el.textContent = n ? 'Brakuje ' + n + ' ' + (n === 1 ? 'pola' : 'pól') : '';
 }
 function persist() {
@@ -389,6 +397,8 @@ function value(s, i) {
   if (p[0] === 'G') return v ? p[4].rows.map((r, k) => v[k] != null ? r + ': ' + p[4].cols[v[k]] : null).filter(Boolean).join('\n') : '';
   if (p[0] === 'C') return v ? p[4] : '';
   if (p[0] === 'O') return orgRows(v).filter(r => r.n.trim()).map((r, k) => (k + 1) + '. ' + r.n.trim() + (r.c.trim() ? ' (' + r.c.trim() + ')' : '') + ' – ' + r.r.map(x => x === 'Inna rola' && r.o.trim() ? r.o.trim() : x).join(', ')).join('\n');
+  if (p[0] === 'M') return mRows(v).filter(mUsed).map((r, k) => (k + 1) + '. ' + mText(r)).join('\n');
+  if (p[0] === 'Q') return vals[fid(s, i) + '_none'] ? 'Nie dotyczy' : arrOf(v).map(x => x.trim()).filter(Boolean).join('\n');
   if (p[0] === 'R') return arrOf(v).map(x => x.trim()).filter(Boolean).join('\n');
   return v || '';
 }
@@ -440,6 +450,27 @@ const sameHtml = () => '<div class="field"><label class="check"><input type="che
 document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.more')) { vals.x_more = e.target.open; persist(); } }, true);
 if (!has('Dodatkowa dyscyplina')) vals.x_dys = 0;
 if (!has('Dodatkowy format wydarzenia')) vals.x_for = 0;
+const mBlank = () => ({ od: '', dz: '', go: '', gz: '', same: true, n: '', u: '', k: '', m: '', c: 'Francja' });
+const mRows = v => Array.isArray(v) ? v.map(r => Object.assign(mBlank(), r)) : (typeof v === 'string' && v.trim() ? v.split('\n').filter(x => x.trim()).map(x => Object.assign(mBlank(), { same: false, n: x, c: '' })) : []);
+const mUsed = r => ['od', 'dz', 'go', 'gz', 'n', 'u', 'k', 'm'].some(x => String(r[x] || '').trim());
+const mMiss = r => ['od', 'go'].concat(r.same ? [] : ['n', 'u', 'm', 'c']).filter(x => !String(r[x] || '').trim());
+function missN(s) { return missingOn(s).reduce((n, i) => { const p = SEK[s].p[i]; return n + (p[0] === 'M' ? Math.max(1, mRows(vals[fid(s, i)]).reduce((a, r) => a + mMiss(r).length, 0)) : 1); }, 0); }
+const dPL = d => d ? d.split('-').reverse().join('.') : '';
+const mText = r => [dPL(r.od) + (r.dz ? '–' + dPL(r.dz) : ''), r.go ? r.go + (r.gz ? '–' + r.gz : '') : '', r.same ? 'główne miejsce wydarzenia' : [r.n, r.u, [r.k, r.m].filter(Boolean).join(' '), r.c].filter(x => String(x || '').trim()).join(', ')].filter(Boolean).join(', ');
+function mRow(id, r, k, show) {
+  const a = ' data-f="' + id + '" data-mi="' + k + '"', miss = show ? mMiss(r) : [];
+  const inp = (key, type, lbl, cls, extra) => '<label>' + lbl + '<input type="' + type + '"' + (cls ? ' class="' + cls + (miss.indexOf(key) >= 0 ? ' bad' : '') + '"' : (miss.indexOf(key) >= 0 ? ' class="bad"' : '')) + a + ' data-mk="' + key + '" value="' + esc(r[key]) + '"' + (extra || '') + '></label>';
+  return '<div class="orow"><div class="onum" aria-hidden="true">' + (k + 1) + '</div><div class="obody mrow-in">'
+    + '<div class="mgrid">' + inp('od', 'date', 'Data rozpoczęcia *', '', ' aria-required="true"') + inp('dz', 'date', 'Data zakończenia', '') + '</div>'
+    + '<div class="mgrid">' + inp('go', 'time', 'Godzina rozpoczęcia *', '', ' aria-required="true"') + inp('gz', 'time', 'Godzina zakończenia', '') + '</div>'
+    + '<label class="mcheck"><input type="checkbox"' + a + ' data-mk="same"' + (r.same ? ' checked' : '') + '>W tym samym miejscu co główne wydarzenie</label>'
+    + (r.same ? '' : '<div class="mgrid full">' + inp('n', 'text', 'Nazwa miejsca *', '', ' aria-required="true"') + inp('u', 'text', 'Ulica i numer *', '', ' aria-required="true"') + '</div>'
+      + '<div class="mgrid addr">' + inp('k', 'text', 'Kod pocztowy', '') + inp('m', 'text', 'Miejscowość *', '', ' aria-required="true"') + '</div>'
+      + '<div class="mgrid">' + inp('c', 'text', 'Kraj *', '', ' list="kraje-m" aria-required="true"') + '</div>')
+    + '</div><div class="macts"><button type="button" class="x" data-mdel="' + id + '" data-mi="' + k + '" aria-label="Usuń termin ' + (k + 1) + '">×</button></div></div>';
+}
+const PH = { 'Organizatorzy, współorganizatorzy i partnerzy': 'np. Fundacja Przykładowa (Polska) – organizator&#10;Association Exemple (Francja) – partner' };
+const QPH = ['np. Fundacja Przykładowa (Polska) – organizator', 'np. Association Exemple (Francja) – partner'];
 const arrOf = v => Array.isArray(v) ? v : (typeof v === 'string' && v ? v.split('\n') : []);
 function missingOn(s) {
   const out = [], okFiles = files.filter(f => f.status === 'queue' || f.status === 'up' || f.status === 'done').length;
@@ -452,6 +483,7 @@ function missingOn(s) {
     if (need && !String(v).trim()) out.push(i);
     else if (p[0] === 'U' && v && !/^https?:\/\/\S+\.\S+/.test(v)) out.push(i);
     else if (p[0] === 'O' && orgRows(vals[fid(s, i)]).some(orgBad)) out.push(i);
+    else if (p[0] === 'M' && mRows(vals[fid(s, i)]).some(r => mMiss(r).length)) out.push(i);
     else if (p[0] === 'R' && arrOf(vals[fid(s, i)]).some(x => x.trim() && !/^https?:\/\/\S+\.\S+/.test(x.trim()))) out.push(i);
     else if (p[0] === 'P' && p[4] && v.length > p[4]) out.push(i);
     else if (p[0] === 'K') { const o = kv(vals[fid(s, i)]); if ((o.sel.indexOf(p[4].other) >= 0 || o.sel.indexOf('__inne') >= 0) && !o.o.trim()) out.push(i); }
@@ -468,7 +500,7 @@ function renderSteps() {
     const bad = false, done = visited[k] && k !== cur && complete;
     const cls = 'step' + (k === cur ? ' cur' : bad ? ' bad' : done ? ' done' : '');
     const lock = k > 0 && emailBad();
-    return '<button class="' + cls + (lock ? ' lock' : '') + '" data-go="' + k + '"' + (k === cur ? ' aria-current="step"' : '') + (lock ? ' aria-disabled="true" title="Najpierw podaj adres e-mail"' : '') + '><span class="n">' + (bad ? '!' : done ? '✓' : k === 0 ? '<i class="dot"></i>' : k) + '</span><span class="tx">' + esc(t) + (k > 0 && !bad && (k !== cur ? left[s] || tried[s] : tried[s]) && missingOn(s).length ? '<span class="miss">brakuje ' + missingOn(s).length + ' ' + (missingOn(s).length === 1 ? 'pola' : 'pól') + '</span>' : '') + '</span></button>';
+    return '<button class="' + cls + (lock ? ' lock' : '') + '" data-go="' + k + '"' + (k === cur ? ' aria-current="step"' : '') + (lock ? ' aria-disabled="true" title="Najpierw podaj adres e-mail"' : '') + '><span class="n">' + (bad ? '!' : done ? '✓' : k === 0 ? '<i class="dot"></i>' : k) + '</span><span class="tx">' + esc(t) + (k > 0 && !bad && (k !== cur ? left[s] || tried[s] : tried[s]) && missingOn(s).length ? '<span class="miss">brakuje ' + missN(s) + ' ' + (missN(s) === 1 ? 'pola' : 'pól') + '</span>' : '') + '</span></button>';
   }).join('');
   $('bar').firstElementChild.style.width = (cur / (PAGES.length - 1) * 100) + '%';
 }
@@ -488,8 +520,10 @@ function fieldHtml(s, i) {
     case 'N': ctl = '<input type="number" class="xs" min="0" step="1" ' + attrs + ' value="' + esc(v) + '">'; break;
     case 'D': ctl = '<input type="date" class="short" ' + attrs + ' value="' + esc(v) + '">'; break;
     case 'H': ctl = '<input type="time" class="tm" ' + attrs + ' value="' + esc(v) + '">'; break;
-    case 'P': ctl = '<textarea ' + attrs + ' rows="' + (p[4] > 1000 ? 9 : 5) + '">' + esc(v) + '</textarea>' + (p[4] ? '<span class="cnt' + ((v || '').length > p[4] ? ' over' : '') + '" data-cnt="' + id + '" data-max="' + p[4] + '">' + (v || '').length + ' / ' + p[4] + ' znaków</span>' : ''); if (p[4] && (v || '').length > p[4]) msg = 'Tekst jest za długi.'; break;
+    case 'P': ctl = '<textarea ' + attrs + (PH[p[1]] ? ' placeholder="' + PH[p[1]] + '"' : '') + ' rows="' + (p[4] > 1000 ? 9 : 5) + '">' + esc(v) + '</textarea>' + (p[4] ? '<span class="cnt' + ((v || '').length > p[4] ? ' over' : '') + '" data-cnt="' + id + '" data-max="' + p[4] + '">' + (v || '').length + ' / ' + p[4] + ' znaków</span>' : ''); if (p[4] && (v || '').length > p[4]) msg = 'Tekst jest za długi.'; break;
     case 'O': { const rows = orgRows(v); ctl = '<div class="orgs">' + rows.map((r, k) => orgRow(id, r, k, rows.length, tried[s])).join('') + '<datalist id="kraje"><option value="Polska"><option value="Francja"></datalist><button type="button" class="mini" data-oadd="' + id + '">+ Dodaj kolejny podmiot</button></div>'; msg = 'Przy każdym podmiocie zaznacz rolę. Przy „Inna rola” wpisz, jaka to rola.'; break; }
+    case 'M': { const rows = mRows(v); ctl = '<div class="orgs">' + rows.map((r, k) => mRow(id, r, k, tried[s])).join('') + '<datalist id="kraje-m"><option value="Francja"><option value="Polska"></datalist><button type="button" class="mini" data-madd="' + id + '">+ Dodaj ' + (rows.length ? 'kolejny termin lub miejsce' : 'termin lub miejsce') + '</button></div>'; msg = 'Uzupełnij datę i godzinę rozpoczęcia oraz miejsce w każdym dodatkowym terminie.'; break; }
+    case 'Q': { const ph = (p[4] && p[4].ph) || QPH, none = p[4] && p[4].none && vals[id + '_none']; const arr = arrOf(v).length ? arrOf(v) : ['', '']; ctl = '<div class="rep"><span class="sr" id="' + id + '_kh">Enter dodaje kolejny wiersz. Backspace w pustym wierszu go usuwa.</span>' + arr.map((x, k) => '<div class="rrow"><input type="text" data-q="1" data-f="' + id + '" data-ri="' + k + '"' + (k === 0 ? ' id="' + id + '"' : '') + ' aria-describedby="' + (k === 0 && p[3] ? id + '_h ' : '') + id + '_kh"' + ' aria-label="' + esc(p[1]) + ', wpis ' + (k + 1) + '"' + (ph[k] && !x ? ' placeholder="' + ph[k] + '"' : '') + ' value="' + esc(x) + '">' + (arr.length > 1 ? '<button type="button" class="x" data-rdel="' + id + '" data-ri="' + k + '" aria-label="Usuń wpis ' + (k + 1) + '">×</button>' : '') + '</div>').join('') + '<button type="button" class="mini" data-radd="' + id + '" data-min="2">' + ((p[4] && p[4].add) || '+ Dodaj kolejny podmiot') + '</button></div>'; if (none) ctl = ''; if (p[4] && p[4].none) ctl += '<label class="check" style="margin-top:6px;font-weight:500"><input type="checkbox" data-qnone="1" data-f="' + id + '_none"' + (none ? ' checked' : '') + '><span>' + esc(p[4].none) + '</span></label>'; break; }
     case 'R': { const arr = arrOf(v).length ? arrOf(v) : ['']; ctl = '<div class="rep">' + arr.map((x, k) => '<div class="rrow"><input type="url" data-f="' + id + '" data-ri="' + k + '"' + (k === 0 ? ' id="' + id + '"' + (p[3] ? ' aria-describedby="' + id + '_h"' : '') : '') + ' aria-label="' + esc(p[1]) + ', link ' + (k + 1) + '" placeholder="https://www.youtube.com/…" value="' + esc(x) + '">' + (arr.length > 1 || x ? '<button type="button" class="x" data-rdel="' + id + '" data-ri="' + k + '" aria-label="Usuń link ' + (k + 1) + '">×</button>' : '') + '</div>').join('') + '<button type="button" class="mini" data-radd="' + id + '">+ Dodaj kolejny link</button></div>'; msg = 'Wpisz pełny adres, np. https://www.youtube.com/…'; break; }
     case 'L': ctl = '<select ' + attrs + '><option value="">Wybierz…</option>' + p[4].map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>'; break;
     case 'G': ctl = '<table class="grid" aria-labelledby="' + id + '_l"><thead><tr><th><span class="sr">Udogodnienie</span></th>' + p[4].cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' + p[4].rows.map((r, k) => '<tr><td>' + esc(r) + '</td>' + p[4].cols.map((c, j) => '<td><input type="radio" name="' + id + '_' + k + '" data-f="' + id + '" data-r="' + k + '" value="' + j + '" aria-label="' + esc(r + ': ' + c) + '"' + (v && v[k] === j ? ' checked' : '') + '></td>').join('') + '</tr>').join('') + '</tbody></table>'; break;
@@ -520,7 +554,7 @@ const fmMissing = () => files.filter(f => ['queue', 'up', 'done'].indexOf(f.stat
 function filesHtml() {
   if (!files.length) return '';
   const n = files.filter(f => f.status === 'done').length;
-  const lab = { queue: 'W kolejce', done: 'Przesłano', big: 'Za duży plik, maks. ' + KONFIG.maxGB + ' GB' };
+  const lab = { queue: 'W kolejce', done: 'Przesłano', big: 'Ponad ' + KONFIG.maxMB + ' MB – usuń i udostępnij linkiem poniżej' };
   return '<div class="fsum">Przesłano ' + n + ' z ' + files.length + '</div><div class="fhint">Przy każdym pliku sprawdź rodzaj. Przy zdjęciach i filmach podaj autora i krótko opisz, co przedstawia. Opis wykorzystamy także jako tekst alternatywny dla osób niewidomych. Przy logotypach i grafikach autor nie jest potrzebny.</div><ul class="flist">' + files.map((f, k) => {
     const ext = esc((f.name.split('.').pop() || '').toUpperCase().slice(0, 4));
     const st = f.status === 'up' ? (f.pct || 0) + '%' : f.status === 'err' ? 'Błąd: ' + esc(f.msg || 'spróbuj ponownie') : lab[f.status];
@@ -554,7 +588,7 @@ function render() {
       + '<div><h3>Cel formularza</h3><p>Prosimy osoby odpowiedzialne za organizację i komunikację wydarzeń Sezonu Francja–Polska 2027 o przekazanie informacji potrzebnych do zaplanowania promocji i przedstawienia wydarzenia publiczności.</p></div>'
       + '<div><h3>Gdzie wykorzystamy informacje</h3><p>Na podstawie odpowiedzi przygotujemy oficjalny program i informator Sezonu, treści na stronę internetową i do mediów społecznościowych, materiały prasowe oraz pozostałe materiały promocyjne.</p></div>'
       + '<div><h3>Jak przesłać zgłoszenie</h3><p>Wypełnij formularz po polsku, osobno dla każdego wydarzenia. Dodatkowe terminy i miejsca tego samego wydarzenia wpisz w jednym zgłoszeniu. Zachowaj oficjalną pisownię nazw własnych i adresów. W razie problemów technicznych wypełnij plik Excel z pytaniami, dołączony do wiadomości z linkiem do formularza, i odeślij go na adres ' + mailLink() + '.</p></div>'
-      + '<div><h3>Jak udostępnić pliki</h3><p>Wszystkie pliki, w tym wideo, dodasz w sekcji „Materiały promocyjne”. Przesyłają się od razu, jeszcze przed wysłaniem zgłoszenia. W nazwach zdjęć i filmów uwzględnij osoby lub obiekty przedstawione w materiale oraz autorstwo.</p></div>'
+      + '<div><h3>Jak udostępnić pliki</h3><p>Zdjęcia, logotypy i grafiki dodasz w sekcji „Materiały promocyjne”. Wideo i pliki powyżej 50 MB udostępnij tam linkiem do folderu, np. na Dysku Google, w WeTransfer albo Dropboxie. W nazwach zdjęć i filmów uwzględnij osoby lub obiekty przedstawione w materiale oraz autorstwo.</p></div>'
       + '</div></div>'
       + '<div class="card"><div class="field' + (tried.email && emailBad() ? ' err' : '') + '"><label class="lbl" for="email">Twój adres e-mail <span class="star" aria-hidden="true">*</span></label><span class="help" id="email_h">Wyślemy na niego potwierdzenie zgłoszenia i, jeśli zechcesz, link do dokończenia formularza.</span><input type="email" id="email" data-f="email" aria-required="true" aria-describedby="email_h" value="' + esc(vals.email) + '" autocomplete="email"><span class="msg" role="alert">Wpisz poprawny adres e-mail.</span></div>'
       + '<p style="margin:22px 0 0;font-size:15px">Wypełnianie zajmuje ok. 20–30 minut. Odpowiedzi zapisują się na bieżąco w tej przeglądarce. Przycisk „Zapisz i dokończ później” wyśle Ci link, którym wrócisz do formularza na dowolnym urządzeniu.</p></div>'
@@ -565,7 +599,7 @@ function render() {
       + (miss ? '<div class="alert" role="alert" id="errsum"><div>Uzupełnij lub popraw ' + (miss === 1 ? 'pole' : 'pola') + ' (' + miss + '):</div><ul>' + missingOn(s).map(i => '<li><a href="#' + fid(s, i) + '" data-jump="' + fid(s, i) + '">' + esc(SEK[s].p[i][1]) + '</a></li>').join('') + '</ul></div>' : '');
     if (S.upload) {
       h += '<details class="info"><summary>Jakie materiały przekazać</summary>' + MATERIALY.map(t => '<p>' + t + '</p>').join('') + '</details>'
-        + '<div class="drop" id="drop" tabindex="0" role="button" aria-describedby="dropH"><b>Przeciągnij tutaj zdjęcia, wideo, logotypy i grafiki</b><span id="dropH">albo kliknij, aby wybrać pliki · do ' + KONFIG.maxPlikow + ' plików, maks. ' + KONFIG.maxGB + ' GB każdy · pliki przesyłają się od razu</span><input type="file" id="fi" multiple hidden></div>'
+        + '<div class="drop" id="drop" tabindex="0" role="button" aria-describedby="dropH"><b>Przeciągnij tutaj zdjęcia, logotypy i grafiki</b><span id="dropH">albo kliknij, aby wybrać pliki · maks. ' + KONFIG.maxMB + ' MB każdy · większe pliki, np. wideo, udostępnij linkiem poniżej</span><input type="file" id="fi" multiple hidden></div>'
         + '<div id="files">' + filesHtml() + '</div><div style="height:28px"></div>';
     }
     h += fieldsHtml(s) + '</div><div class="miss-note" id="missNote" aria-live="polite"></div><div class="nav">'
@@ -607,6 +641,10 @@ document.addEventListener('click', e => {
     if (f.status === 'done' && f.id && token && !DEMO) api('removeFile', { token: token, id: f.id }).catch(() => {});
     drawFiles(); persist(); return;
   }
+  const ma = e.target.closest('[data-madd]');
+  if (ma) { const id = ma.dataset.madd, rows = mRows(vals[id]); rows.push(mBlank()); vals[id] = rows; persist(); keep('[data-f="' + id + '"][data-mi="' + (rows.length - 1) + '"][data-mk="od"]'); say('Dodano termin ' + rows.length + '.'); return; }
+  const md = e.target.closest('[data-mdel]');
+  if (md) { const id = md.dataset.mdel, rows = mRows(vals[id]); rows.splice(+md.dataset.mi, 1); vals[id] = rows; persist(); keep('[data-madd="' + id + '"]'); say(rows.length ? 'Usunięto termin. Pozostało ' + rows.length + '.' : 'Usunięto termin.'); return; }
   const oa = e.target.closest('[data-oadd]');
   if (oa) { const id = oa.dataset.oadd, rows = orgRows(vals[id]); rows.push({ n: '', c: '', r: [], o: '' }); vals[id] = rows; persist(); keep('[data-f="' + id + '"][data-oi="' + (rows.length - 1) + '"][data-ok="n"]'); return; }
   const od = e.target.closest('[data-odel]');
@@ -614,9 +652,9 @@ document.addEventListener('click', e => {
   const om = e.target.closest('[data-omv]');
   if (om) { const id = om.dataset.omv, k = +om.dataset.oi, j = k + +om.dataset.d, rows = orgRows(vals[id]); const tmp = rows[k]; rows[k] = rows[j]; rows[j] = tmp; vals[id] = rows; persist(); keep('[data-omv="' + id + '"][data-oi="' + j + '"][data-d="' + om.dataset.d + '"]', '[data-f="' + id + '"][data-oi="' + j + '"][data-ok="n"]'); return; }
   const ra = e.target.closest('[data-radd]');
-  if (ra) { const id = ra.dataset.radd, a = arrOf(vals[id]).slice(); if (!a.length) a.push(''); a.push(''); vals[id] = a; persist(); rerep(id, a.length - 1); return; }
+  if (ra) { const id = ra.dataset.radd, a = arrOf(vals[id]).slice(); while (a.length < +(ra.dataset.min || 1)) a.push(''); a.push(''); vals[id] = a; persist(); rerep(id, a.length - 1); say('Dodano wiersz ' + a.length + '.'); return; }
   const rd = e.target.closest('[data-rdel]');
-  if (rd) { const id = rd.dataset.rdel, a = arrOf(vals[id]).slice(); a.splice(+rd.dataset.ri, 1); vals[id] = a.length ? a : ['']; persist(); rerep(id, Math.min(+rd.dataset.ri, vals[id].length - 1)); return; }
+  if (rd) { const id = rd.dataset.rdel, a = arrOf(vals[id]).slice(); a.splice(+rd.dataset.ri, 1); vals[id] = a.length ? a : ['']; persist(); rerep(id, Math.min(+rd.dataset.ri, vals[id].length - 1)); say('Usunięto wiersz.'); return; }
   if (e.target.closest('#later')) { saveLater(); return; }
   if (e.target.closest('#send')) send();
 });
@@ -669,6 +707,12 @@ document.addEventListener('paste', e => {
   document.execCommand('insertHTML', false, out);
 });
 document.addEventListener('keydown', e => {
+  const q = e.target; if (q && q.dataset && q.dataset.q && !e.isComposing) {
+    const id = q.dataset.f, k = +q.dataset.ri, a = arrOf(vals[id]).slice(); while (a.length < 2) a.push('');
+    if (e.key === 'Enter') { e.preventDefault(); a.splice(k + 1, 0, ''); vals[id] = a; persist(); rerep(id, k + 1); say('Dodano wiersz ' + (k + 2) + ' z ' + a.length + '.'); return; }
+    if (e.key === 'Backspace' && !q.value && a.length > 1 && k > 0) { e.preventDefault(); a.splice(k, 1); vals[id] = a; persist(); rerep(id, k - 1); const n = document.activeElement; if (n && n.setSelectionRange) n.setSelectionRange(n.value.length, n.value.length); say('Usunięto wiersz. Pozostało ' + a.length + '.'); return; }
+    return;
+  }
   const el = e.target.closest && e.target.closest('.rich'); if (!el) return;
   if ((e.ctrlKey || e.metaKey) && /^[iu]$/i.test(e.key) && e.key.toLowerCase() === 'u') e.preventDefault();
 });
@@ -677,6 +721,7 @@ document.addEventListener('input', e => {
   if (e.target.dataset.fm) { const t = e.target; vals.fm = vals.fm || {}; vals.fm[t.dataset.fm] = Object.assign({}, vals.fm[t.dataset.fm], { [t.dataset.k]: t.value }); if (t.value.trim()) t.classList.remove('bad'); persist(); if (t.dataset.k === 'k') drawFiles(); return; }
   if (e.target.dataset.x) { vals[e.target.dataset.x] = e.target.checked; persist(); return; }
   const t = e.target, id = t.dataset.f; if (!id) return;
+  if (t.dataset.qnone) { vals[id] = t.checked; say(t.checked ? 'Ukryto listę osób.' : 'Pokazano listę osób.'); const fl = t.closest('.field'); if (fl) fl.classList.remove('err'); persist(); setTimeout(() => keep('[data-f="' + id + '"]'), 0); return; }
   if (id === 'email') renderSteps();
   if (t.dataset.kc != null || t.dataset.ko) {
     const sp = Object.keys(IDX).find(l => IDX[l] === id), a = id.slice(1).split('_'), p = SEK[+a[0]].p[+a[1]], o = kv(vals[id]);
@@ -685,7 +730,12 @@ document.addEventListener('input', e => {
     vals[id] = o; const ow = $(id + '_ow'); if (ow) ow.hidden = o.sel.indexOf(p[4].other) < 0;
     const fl = t.closest('.field'); if (fl) fl.classList.remove('err'); persist(); return;
   }
-  if (t.dataset.oi != null) {
+  if (t.dataset.mi != null) {
+    const rows = mRows(vals[id]), r = rows[+t.dataset.mi];
+    if (t.dataset.mk === 'same') { r.same = t.checked; vals[id] = rows; persist(); say(t.checked ? 'Ukryto pola adresu.' : 'Pokazano pola adresu miejsca.'); setTimeout(() => keep('[data-f="' + id + '"][data-mi="' + t.dataset.mi + '"][data-mk="same"]'), 0); return; }
+    r[t.dataset.mk] = t.value; if (String(t.value).trim()) t.classList.remove('bad'); vals[id] = rows;
+  }
+  else if (t.dataset.oi != null) {
     const rows = orgRows(vals[id]), r = rows[+t.dataset.oi];
     if (t.dataset.ok === 'r') { r.r = t.checked ? r.r.concat([t.value]) : r.r.filter(x => x !== t.value); const ch = t.closest('.chips'); if (ch && r.r.length) ch.classList.remove('bad'); if (t.value === 'Inna rola') setTimeout(() => keep('[data-f="' + id + '"][data-oi="' + t.dataset.oi + '"][data-ok="' + (t.checked ? 'o' : 'r') + '"]'), 0); }
     else { r[t.dataset.ok] = t.value; if (t.value.trim()) t.classList.remove('bad'); }
@@ -706,7 +756,7 @@ function addFiles(list) {
   let skipped = 0;
   Array.from(list).forEach(f => {
     if (files.length >= KONFIG.maxPlikow || !f.size) { skipped++; return; }
-    files.push({ key: rk(), file: f, name: f.name, size: f.size, type: f.type || 'application/octet-stream', status: f.size > KONFIG.maxGB * 1073741824 ? 'big' : 'queue', pct: 0, url: /^image\/(jpeg|png|gif|webp)/.test(f.type) ? URL.createObjectURL(f) : '' });
+    files.push({ key: rk(), file: f, name: f.name, size: f.size, type: f.type || 'application/octet-stream', status: f.size > KONFIG.maxMB * 1048576 ? 'big' : 'queue', pct: 0, url: /^image\/(jpeg|png|gif|webp)/.test(f.type) ? URL.createObjectURL(f) : '' });
   });
   if (skipped) toast('Pominięto pliki: ' + skipped + ' (puste lub ponad limit ' + KONFIG.maxPlikow + ' plików).', 1);
   drawFiles(); pump();
