@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="fr">
 <head>
 <base target="_top">
 <meta charset="utf-8">
@@ -234,10 +234,17 @@ h2[tabindex]:focus{outline:none}
   .drive{flex-direction:column;align-items:flex-start}
   .grid th{width:auto;font-size:13px}
 }
+.top-r{display:flex;align-items:center;gap:16px}
+.lang{display:flex;gap:2px;border:2px solid var(--brown);border-radius:999px;padding:2px;background:#fff}
+.lang button{min-width:44px;height:40px;border:0;border-radius:999px;background:transparent;font:inherit;font-size:14px;font-weight:700;color:var(--brown);cursor:pointer}
+.lang button:hover{background:#f4efe9}
+.lang button[aria-pressed="true"]{background:var(--brown);color:#fff}
+.lang button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+@media (max-width:600px){.draft{display:none}.top img{height:36px}.lang button{min-width:40px}}
 </style>
 </head>
 <body>
-<header class="top"><div class="wrap top-in"><div id="logo"></div><span class="draft" id="draft" aria-live="polite"></span></div></header>
+<header class="top"><div class="wrap top-in"><div id="logo"></div><div class="top-r"><span class="draft" id="draft" aria-live="polite"></span><div class="lang" role="group" aria-label="Langue · Język · Language"><button type="button" data-lang="fr" lang="fr" aria-label="Français" aria-pressed="false">FR</button><button type="button" data-lang="pl" lang="pl" aria-label="Polski" aria-pressed="false">PL</button><button type="button" data-lang="en" lang="en" aria-label="English" aria-pressed="false">EN</button></div></div></div></header>
 <div class="hero"><div class="wrap"><h1>Formularz komunikacyjny</h1><p>Sezon Francja–Polska 2027</p></div></div>
 <div class="wrap layout">
   <nav class="steps" id="steps" aria-label="Sekcje formularza"></nav>
@@ -248,17 +255,376 @@ h2[tabindex]:focus{outline:none}
 <div class="sr" id="sr" role="status" aria-live="polite"></div>
 
 <script>
+/* ---------- języki formularza: FR (domyślnie), PL, EN ----------
+ * Źródłowe teksty formularza są po polsku. T() tłumaczy je na język wybrany w nagłówku.
+ * Nowy tekst w formularzu = nowy wpis w I18 (klucz po polsku: [francuski, angielski]).
+ */
+let LANG = (() => { const q = new URLSearchParams(location.search).get('lang'); let l = q; try { if (!l) l = localStorage.getItem('sezon2027_lang'); else localStorage.setItem('sezon2027_lang', l); } catch (e) {} return ['fr', 'pl', 'en'].indexOf(l) >= 0 ? l : 'fr'; })();
+document.documentElement.lang = LANG;
+const I18 = {
+ 'Formularz komunikacyjny': ['Formulaire de communication', 'Communication form'],
+ 'Sezon Francja–Polska 2027': ['Saison Pologne–France 2027', 'Saison Pologne–France 2027'],
+ 'Formularz komunikacyjny – Sezon Francja–Polska 2027': ['Formulaire de communication – Saison Pologne–France 2027', 'Communication form – Saison Pologne–France 2027'],
+ 'Tryb pokazowy: dane nie są wysyłane': ['Mode démonstration : aucune donnée n’est envoyée', 'Demo mode: no data is sent'],
+ 'Sekcje formularza': ['Sections du formulaire', 'Form sections'],
+ 'Wysyłanie zgłoszenia…': ['Envoi du formulaire…', 'Sending your submission…'],
+ 'z': ['sur', 'of'],
+ 'Zgłoszenie wysłane': ['Formulaire envoyé', 'Submission sent'],
+ 'Wstęp': ['Introduction', 'Introduction'],
+ 'Informacje o wydarzeniu': ['Informations sur l’événement', 'Event information'],
+ 'Terminy i miejsca': ['Dates et lieux', 'Dates and venues'],
+ 'Wstęp i dostępność': ['Accès et accessibilité', 'Admission and accessibility'],
+ 'Materiały promocyjne': ['Supports de communication', 'Promotional materials'],
+ 'Kontakty, komunikacja i oświadczenie': ['Contacts, communication et déclaration', 'Contacts, communication and declaration'],
+ 'Najpierw podaj adres e-mail': ['Indiquez d’abord votre adresse e-mail', 'Enter your email address first'],
+ 'Najpierw podaj adres e-mail.': ['Indiquez d’abord votre adresse e-mail.', 'Enter your email address first.'],
+ 'Cel formularza': ['Objet du formulaire', 'Purpose of the form'],
+ 'Prosimy osoby odpowiedzialne za organizację i komunikację wydarzeń Sezonu Francja–Polska 2027 o przekazanie informacji potrzebnych do zaplanowania promocji i przedstawienia wydarzenia publiczności.': ['Nous demandons aux personnes chargées de l’organisation et de la communication des événements de la Saison Pologne–France 2027 de nous transmettre les informations nécessaires pour planifier leur promotion et présenter l’événement au public.', 'We ask the people responsible for organising and communicating events of the Saison Pologne–France 2027 to provide the information we need to plan promotion and present the event to the public.'],
+ 'Gdzie wykorzystamy informacje': ['Utilisation des informations', 'How we will use the information'],
+ 'Na podstawie odpowiedzi przygotujemy oficjalny program i informator Sezonu, treści na stronę internetową i do mediów społecznościowych, materiały prasowe oraz pozostałe materiały promocyjne.': ['À partir de vos réponses, nous préparerons le programme officiel et le guide de la Saison, les contenus du site internet et des réseaux sociaux, les supports de presse ainsi que les autres supports de communication.', 'Based on your answers, we will prepare the official programme and guide of the Season, content for the website and social media, press materials and other promotional materials.'],
+ 'Jak przesłać zgłoszenie': ['Comment remplir le formulaire', 'How to submit'],
+ 'Wypełnij formularz po francusku, osobno dla każdego wydarzenia. Dodatkowe terminy i miejsca tego samego wydarzenia wpisz w jednym zgłoszeniu. Zachowaj oficjalną pisownię nazw własnych i adresów. W razie problemów technicznych wypełnij plik Excel z pytaniami, dołączony do wiadomości z linkiem do formularza, i odeślij go na adres': ['Remplissez le formulaire en français, un formulaire par événement. Indiquez les dates et lieux supplémentaires d’un même événement dans un seul formulaire. Respectez l’orthographe officielle des noms propres et des adresses. En cas de problème technique, remplissez le fichier Excel joint au message contenant le lien vers le formulaire et renvoyez-le à l’adresse', 'Please fill in the form in French, one form per event. Enter additional dates and venues of the same event in a single submission. Keep the official spelling of names and addresses. If you have technical problems, fill in the Excel file attached to the message with the link to the form and send it back to'],
+ 'Jak udostępnić pliki': ['Comment transmettre les fichiers', 'How to share files'],
+ 'Zdjęcia, logotypy i grafiki dodasz w sekcji „Materiały promocyjne”. Wideo i pliki powyżej 50 MB udostępnij tam linkiem do folderu, np. na Dysku Google, w WeTransfer albo Dropboxie. W nazwach zdjęć i filmów uwzględnij osoby lub obiekty przedstawione w materiale oraz autorstwo.': ['Ajoutez les photos, logos et visuels dans la section « Supports de communication ». Pour les vidéos et les fichiers de plus de 50 Mo, indiquez-y un lien vers un dossier, par exemple sur Google Drive, WeTransfer ou Dropbox. Dans le nom des photos et des vidéos, mentionnez les personnes ou les objets représentés ainsi que l’auteur.', 'Add photos, logos and graphics in the “Promotional materials” section. For videos and files over 50 MB, share a link to a folder there, e.g. on Google Drive, WeTransfer or Dropbox. In the names of photos and videos, include the people or objects shown and the author.'],
+ 'Twój adres e-mail': ['Votre adresse e-mail', 'Your email address'],
+ 'Wyślemy na niego potwierdzenie zgłoszenia i, jeśli zechcesz, link do dokończenia formularza.': ['Nous y enverrons la confirmation d’envoi et, si vous le souhaitez, un lien pour terminer le formulaire plus tard.', 'We will send the confirmation there and, if you wish, a link to finish the form later.'],
+ 'Wpisz poprawny adres e-mail.': ['Saisissez une adresse e-mail valide.', 'Enter a valid email address.'],
+ 'Wypełnianie zajmuje ok. 20–30 minut. Odpowiedzi zapisują się na bieżąco w tej przeglądarce. Przycisk „Zapisz i dokończ później” wyśle Ci link, którym wrócisz do formularza na dowolnym urządzeniu.': ['Comptez environ 20 à 30 minutes. Vos réponses sont enregistrées au fur et à mesure dans ce navigateur. Le bouton « Enregistrer et terminer plus tard » vous envoie un lien pour reprendre le formulaire sur n’importe quel appareil.', 'It takes about 20–30 minutes. Your answers are saved as you go in this browser. The “Save and finish later” button sends you a link to return to the form on any device.'],
+ 'Rozpocznij →': ['Commencer →', 'Start →'],
+ 'Pola oznaczone': ['Les champs marqués', 'Fields marked'],
+ 'są wymagane.': ['sont obligatoires.', 'are required.'],
+ 'To pole jest wymagane.': ['Ce champ est obligatoire.', 'This field is required.'],
+ '← Wstecz': ['← Retour', '← Back'],
+ 'Zapisz i dokończ później': ['Enregistrer et terminer plus tard', 'Save and finish later'],
+ 'Dalej →': ['Suivant →', 'Next →'],
+ 'Wyślij zgłoszenie': ['Envoyer le formulaire', 'Send submission'],
+ 'Tytuł wydarzenia': ['Titre de l’événement', 'Event title'],
+ 'Podaj oficjalny tytuł do publikacji.': ['Indiquez le titre officiel à publier.', 'Enter the official title for publication.'],
+ 'Podtytuł wydarzenia': ['Sous-titre de l’événement', 'Event subtitle'],
+ 'Podaj podtytuł, jeśli dotyczy.': ['Indiquez le sous-titre, le cas échéant.', 'Enter the subtitle, if applicable.'],
+ 'Nazwa projektu nadrzędnego': ['Projet de rattachement', 'Parent project'],
+ 'Jeśli wydarzenie jest częścią większego projektu, festiwalu lub cyklu, podaj jego nazwę.': ['Si l’événement fait partie d’un projet, d’un festival ou d’un cycle plus large, indiquez son nom.', 'If the event is part of a larger project, festival or series, enter its name.'],
+ 'Organizatorzy, współorganizatorzy i partnerzy': ['Organisateurs, coorganisateurs et partenaires', 'Organisers, co-organisers and partners'],
+ 'Wymień podmioty i osoby do uwzględnienia w materiałach, w kolejności do publikacji. Przy każdym podaj nazwę, kraj i rolę. Enter dodaje kolejny wiersz.': ['Listez les structures et les personnes à mentionner dans les supports, dans l’ordre de publication. Pour chacune, indiquez le nom, le pays et le rôle. La touche Entrée ajoute une ligne.', 'List the organisations and people to be credited, in order of publication. For each, give the name, country and role. Press Enter to add a line.'],
+ 'Enter dodaje kolejny wiersz. Backspace w pustym wierszu go usuwa.': ['La touche Entrée ajoute une ligne. Retour arrière sur une ligne vide la supprime.', 'Enter adds a line. Backspace on an empty line removes it.'],
+ '+ Dodaj kolejny podmiot': ['+ Ajouter une structure', '+ Add another organisation'],
+ 'np. Fundacja Przykładowa (Polska) – organizator': ['ex. Association Exemple (France) – organisateur', 'e.g. Example Association (France) – organiser'],
+ 'np. Association Exemple (Francja) – partner': ['ex. Fondation Exemple (Pologne) – partenaire', 'e.g. Example Foundation (Poland) – partner'],
+ 'Główna dyscyplina': ['Discipline principale', 'Main discipline'],
+ 'Wybierz główną dyscyplinę wydarzenia.': ['Choisissez la discipline principale de l’événement.', 'Choose the main discipline of the event.'],
+ 'Wybierz…': ['Choisir…', 'Choose…'],
+ '+ Dodaj drugą dyscyplinę': ['+ Ajouter une deuxième discipline', '+ Add a second discipline'],
+ 'Dodatkowa dyscyplina': ['Discipline secondaire', 'Additional discipline'],
+ 'Wybierz drugą dyscyplinę, jeśli dotyczy.': ['Choisissez une deuxième discipline, le cas échéant.', 'Choose a second discipline, if applicable.'],
+ '× Usuń drugą dyscyplinę': ['× Supprimer la deuxième discipline', '× Remove second discipline'],
+ 'Usunięto drugą dyscyplinę.': ['Deuxième discipline supprimée.', 'Second discipline removed.'],
+ 'Główny format wydarzenia': ['Format principal', 'Main format'],
+ 'Wybierz główny format wydarzenia.': ['Choisissez le format principal de l’événement.', 'Choose the main format of the event.'],
+ '+ Dodaj drugi format': ['+ Ajouter un deuxième format', '+ Add a second format'],
+ 'Dodatkowy format wydarzenia': ['Format secondaire', 'Additional format'],
+ 'Wybierz drugi format, jeśli dotyczy.': ['Choisissez un deuxième format, le cas échéant.', 'Choose a second format, if applicable.'],
+ '× Usuń drugi format': ['× Supprimer le deuxième format', '× Remove second format'],
+ 'Usunięto drugi format.': ['Deuxième format supprimé.', 'Second format removed.'],
+ 'Architektura, urbanistyka i krajobraz': ['Architecture, urbanisme et paysage', 'Architecture, urban planning and landscape'],
+ 'Praktyki artystyczne i społeczności': ['Pratiques artistiques et communautés', 'Artistic practices and communities'],
+ 'Muzyka klasyczna': ['Musique classique', 'Classical music'],
+ 'Muzyka współczesna': ['Musique contemporaine', 'Contemporary music'],
+ 'Dziedzictwo kulturowe': ['Patrimoine culturel', 'Cultural heritage'],
+ 'Kultura, gospodarka, innowacje i technologie': ['Culture, économie, innovation et technologies', 'Culture, economy, innovation and technology'],
+ 'Debata': ['Débat', 'Debate'],
+ 'Design, moda i rzemiosło': ['Design, mode et métiers d’art', 'Design, fashion and crafts'],
+ 'Edukacja': ['Éducation', 'Education'],
+ 'Film i sztuki audiowizualne (w tym sztuka wideo)': ['Cinéma et audiovisuel (dont art vidéo)', 'Film and audiovisual arts (including video art)'],
+ 'Gastronomia': ['Gastronomie', 'Gastronomy'],
+ 'Szkolnictwo wyższe i kultura naukowa': ['Enseignement supérieur et culture scientifique', 'Higher education and scientific culture'],
+ 'Literatura i komiks': ['Littérature et bande dessinée', 'Literature and comics'],
+ 'Sztuki performatywne (teatr, taniec, cyrk i lalkarstwo)': ['Spectacle vivant (théâtre, danse, cirque et marionnettes)', 'Performing arts (theatre, dance, circus and puppetry)'],
+ 'Fotografia': ['Photographie', 'Photography'],
+ 'Muzyka popularna i jazz': ['Musiques actuelles et jazz', 'Popular music and jazz'],
+ 'Gry wideo i twórczość cyfrowa (w tym rzeczywistość wirtualna)': ['Jeux vidéo et création numérique (dont réalité virtuelle)', 'Video games and digital creation (including virtual reality)'],
+ 'Sztuki wizualne (w tym sztuka współczesna)': ['Arts visuels (dont art contemporain)', 'Visual arts (including contemporary art)'],
+ 'Targi sztuki': ['Foire d’art', 'Art fair'],
+ 'Współpraca lub wymiana artystyczna': ['Coopération ou échange artistique', 'Artistic cooperation or exchange'],
+ 'Rezydencja artystyczna': ['Résidence artistique', 'Artist residency'],
+ 'Koncert': ['Concert', 'Concert'],
+ 'Trasa koncertowa': ['Tournée', 'Concert tour'],
+ 'Wystawa': ['Exposition', 'Exhibition'],
+ 'Festiwal': ['Festival', 'Festival'],
+ 'Instalacja': ['Installation', 'Installation'],
+ 'Wykład': ['Conférence', 'Lecture'],
+ 'Spektakl': ['Spectacle', 'Performance'],
+ 'Publikacja': ['Publication', 'Publication'],
+ 'Projekcja filmowa': ['Projection', 'Film screening'],
+ 'Prezentacja': ['Présentation', 'Presentation'],
+ 'Spotkanie': ['Rencontre', 'Meeting'],
+ 'Warsztaty': ['Atelier', 'Workshop'],
+ 'Grupa odbiorców': ['Public visé', 'Audience'],
+ 'Zaznacz wszystkie, które pasują.': ['Cochez toutes les réponses qui conviennent.', 'Select all that apply.'],
+ 'Szeroka publiczność': ['Grand public', 'General public'],
+ 'Rodziny z dziećmi': ['Familles', 'Families with children'],
+ 'Dzieci': ['Enfants', 'Children'],
+ 'Młodzież': ['Jeunes', 'Young people'],
+ 'Studenci': ['Étudiants', 'Students'],
+ 'Seniorzy': ['Seniors', 'Seniors'],
+ 'Branża i profesjonaliści': ['Professionnels', 'Professionals'],
+ 'Inna': ['Autre', 'Other'],
+ 'Jaka grupa?': ['Quel public ?', 'Which group?'],
+ 'Zaznacz co najmniej jedną opcję.': ['Cochez au moins une option.', 'Select at least one option.'],
+ 'Języki wydarzenia': ['Langues de l’événement', 'Event languages'],
+ 'Zaznacz języki używane podczas wydarzenia.': ['Cochez les langues utilisées pendant l’événement.', 'Select the languages used during the event.'],
+ 'polski': ['polonais', 'Polish'],
+ 'francuski': ['français', 'French'],
+ 'angielski': ['anglais', 'English'],
+ 'bez języka mówionego': ['sans paroles', 'no spoken language'],
+ 'inny': ['autre', 'other'],
+ 'Jaki język?': ['Quelle langue ?', 'Which language?'],
+ 'Krótki opis wydarzenia': ['Description courte', 'Short description'],
+ 'Napisz wprowadzenie dla publiczności. Maksymalnie 3 zdania i 600 znaków.': ['Rédigez une introduction destinée au public. 3 phrases et 600 caractères maximum.', 'Write an introduction for the public. Up to 3 sentences and 600 characters.'],
+ 'Szczegółowy opis wydarzenia': ['Description détaillée', 'Detailed description'],
+ 'Opisz wydarzenie na potrzeby publikacji. Maksymalnie 15 zdań i 1600 znaków.': ['Décrivez l’événement en vue de sa publication. 15 phrases et 1 600 caractères maximum.', 'Describe the event for publication. Up to 15 sentences and 1,600 characters.'],
+ 'Tekst jest za długi.': ['Le texte est trop long.', 'The text is too long.'],
+ 'Artyści, kuratorzy i pozostałe osoby uczestniczące w programie': ['Artistes, commissaires et autres participants', 'Artists, curators and other participants'],
+ 'Wymień osoby w kolejności do publikacji. Przy każdym nazwisku podaj rolę. Enter dodaje kolejny wiersz.': ['Listez les personnes dans l’ordre de publication, avec leur rôle. La touche Entrée ajoute une ligne.', 'List the people in order of publication, with their role. Press Enter to add a line.'],
+ '+ Dodaj kolejną osobę': ['+ Ajouter une personne', '+ Add another person'],
+ 'np. Anna Kowalska – reżyserka': ['ex. Anna Kowalska – metteuse en scène', 'e.g. Anna Kowalska – director'],
+ 'np. Jean Dupont – kurator': ['ex. Jean Dupont – commissaire d’exposition', 'e.g. Jean Dupont – curator'],
+ 'Wydarzenie nie ma imiennie wskazanych osób': ['Aucune personne nommément citée', 'No named participants'],
+ 'Treści dodatkowe (opcjonalnie)': ['Contenus complémentaires (facultatif)', 'Additional content (optional)'],
+ 'Biogramy, teksty kuratorskie, cytaty, opis instytucji': ['Biographies, textes curatoriaux, citations, présentation de la structure', 'Biographies, curatorial texts, quotes, description of the institution'],
+ 'Biogramy osób uczestniczących': ['Biographies des participants', 'Participant biographies'],
+ 'Podaj krótkie biogramy podpisane imieniem i nazwiskiem lub wklej link do pliku z biogramami.': ['Indiquez de courtes biographies précédées du prénom et du nom, ou collez un lien vers un fichier de biographies.', 'Provide short biographies with each person’s name, or paste a link to a file with biographies.'],
+ 'Dodatkowe treści do publikacji': ['Autres contenus à publier', 'Other content for publication'],
+ 'Dodaj tekst kuratorski, cytaty lub opis instytucji. Możesz również podać link do pliku PDF.': ['Ajoutez un texte curatorial, des citations ou une présentation de la structure. Vous pouvez aussi indiquer un lien vers un fichier PDF.', 'Add a curatorial text, quotes or a description of the institution. You can also provide a link to a PDF.'],
+ 'Formatowanie tekstu': ['Mise en forme du texte', 'Text formatting'],
+ 'Pogrubienie': ['Gras', 'Bold'],
+ 'Kursywa': ['Italique', 'Italic'],
+ 'Data rozpoczęcia': ['Date de début', 'Start date'],
+ 'Jeśli wydarzenie ma kilka terminów, podaj pierwszą datę.': ['Si l’événement a plusieurs dates, indiquez la première.', 'If the event has several dates, enter the first one.'],
+ 'Data zakończenia': ['Date de fin', 'End date'],
+ 'Uzupełnij, jeśli wydarzenie kończy się w innym dniu niż się rozpoczyna.': ['À remplir si l’événement se termine un autre jour.', 'Fill in if the event ends on a different day.'],
+ 'Godzina rozpoczęcia': ['Heure de début', 'Start time'],
+ 'Podaj godzinę rozpoczęcia dla publiczności według czasu lokalnego. Przy wydarzeniu wielodniowym podaj godzinę otwarcia pierwszego dnia.': ['Indiquez l’heure d’ouverture au public, en heure locale. Pour un événement sur plusieurs jours, indiquez l’heure d’ouverture du premier jour.', 'Enter the start time for the public, in local time. For multi-day events, enter the opening time on the first day.'],
+ 'Godzina zakończenia': ['Heure de fin', 'End time'],
+ 'Podaj godzinę zakończenia według czasu lokalnego, jeśli jest znana.': ['Indiquez l’heure de fin en heure locale, si elle est connue.', 'Enter the end time in local time, if known.'],
+ 'Nazwa głównego miejsca wydarzenia': ['Lieu principal', 'Main venue'],
+ 'Podaj oficjalną nazwę miejsca. Jeśli dotyczy, wskaż budynek, salę lub scenę.': ['Indiquez le nom officiel du lieu et, le cas échéant, le bâtiment, la salle ou la scène.', 'Enter the official name of the venue and, if relevant, the building, room or stage.'],
+ 'Ulica i numer': ['Adresse (numéro et rue)', 'Street and number'],
+ 'Podaj oficjalny adres miejsca.': ['Indiquez l’adresse officielle du lieu.', 'Enter the official address of the venue.'],
+ 'Kod pocztowy': ['Code postal', 'Postcode'],
+ 'Użyj formatu przyjętego w danym kraju, np. 75001 we Francji.': ['Format du pays concerné, par ex. 75001 en France.', 'Use the local format, e.g. 75001 in France.'],
+ 'Miejscowość': ['Ville', 'City'],
+ 'Kraj': ['Pays', 'Country'],
+ 'Podaj nazwę kraju.': ['Indiquez le pays.', 'Enter the country.'],
+ 'Francja': ['France', 'France'],
+ 'Polska': ['Pologne', 'Poland'],
+ 'Pokaz przedpremierowy, otwarcie i zamknięcie': ['Avant-première, vernissage et clôture', 'Preview, opening and closing'],
+ 'Wskaż, czy planowany jest pokaz przedpremierowy, wernisaż, uroczyste otwarcie lub finisaż. Podaj rodzaj, datę i godzinę każdego punktu oraz miejsce, jeśli jest inne niż główne miejsce wydarzenia.': ['Précisez si une avant-première, un vernissage, une inauguration ou un finissage est prévu. Indiquez pour chacun le type, la date, l’heure et le lieu s’il diffère du lieu principal.', 'State whether a preview, private view, official opening or closing event is planned. For each, give the type, date, time and venue if different from the main venue.'],
+ 'Dodatkowe terminy i miejsca': ['Dates et lieux supplémentaires', 'Additional dates and venues'],
+ 'Dodaj osobno każdy kolejny termin lub miejsce. Jeśli wydarzenie odbywa się w tym samym miejscu co główne, wystarczy data i godzina.': ['Ajoutez séparément chaque date ou lieu supplémentaire. S’il s’agit du lieu principal, la date et l’heure suffisent.', 'Add each additional date or venue separately. If it is at the main venue, the date and time are enough.'],
+ 'Nazwa miejsca': ['Nom du lieu', 'Venue name'],
+ 'W tym samym miejscu co główne wydarzenie': ['Au même lieu que l’événement principal', 'At the main venue'],
+ '+ Dodaj termin lub miejsce': ['+ Ajouter une date ou un lieu', '+ Add a date or venue'],
+ '+ Dodaj kolejny termin lub miejsce': ['+ Ajouter une autre date ou un autre lieu', '+ Add another date or venue'],
+ 'Uzupełnij datę i godzinę rozpoczęcia oraz miejsce w każdym dodatkowym terminie.': ['Indiquez la date, l’heure de début et le lieu de chaque date supplémentaire.', 'Enter the start date, start time and venue for each additional date.'],
+ 'Sposób wstępu': ['Conditions d’accès', 'Admission'],
+ 'Wybierz sposób wstępu. Jeśli to potrzebne, pojawią się pola na ceny, link i datę sprzedaży.': ['Choisissez le mode d’accès. Si nécessaire, des champs pour les tarifs, le lien et la date d’ouverture des ventes apparaîtront.', 'Choose the type of admission. If needed, fields for prices, the link and the sales date will appear.'],
+ 'Bilety płatne': ['Billetterie payante', 'Paid tickets'],
+ 'Wstęp wolny': ['Entrée libre', 'Free admission'],
+ 'Wstęp wolny po rejestracji': ['Entrée libre sur inscription', 'Free admission with registration'],
+ 'Wstęp za zaproszeniem': ['Sur invitation', 'By invitation'],
+ 'Do potwierdzenia': ['À confirmer', 'To be confirmed'],
+ 'Inny': ['Autre', 'Other'],
+ 'Ceny, pula biletów i warunki wstępu': ['Tarifs, jauge et conditions d’accès', 'Prices, ticket allocation and admission conditions'],
+ 'Podaj ceny regularne i ulgowe z walutą, przybliżoną pulę biletów, zniżki, ograniczenia wiekowe i pozostałe zasady wstępu lub rejestracji.': ['Indiquez les tarifs plein et réduit avec la devise, la jauge approximative, les réductions, les limites d’âge et les autres conditions d’accès ou d’inscription.', 'Give full and reduced prices with currency, the approximate number of tickets, discounts, age limits and other admission or registration rules.'],
+ 'Link do biletów lub rejestracji': ['Lien billetterie ou inscription', 'Ticket or registration link'],
+ 'Wklej pełny adres strony sprzedaży lub rejestracji.': ['Collez l’adresse complète de la page de vente ou d’inscription.', 'Paste the full address of the ticketing or registration page.'],
+ 'Data rozpoczęcia sprzedaży lub rejestracji': ['Ouverture des ventes ou des inscriptions', 'Sales or registration opening date'],
+ 'Podaj datę rozpoczęcia sprzedaży lub rejestracji, jeśli jest znana.': ['Indiquez la date d’ouverture des ventes ou des inscriptions, si elle est connue.', 'Enter the date sales or registration open, if known.'],
+ 'Maksymalna liczba uczestników': ['Nombre maximal de participants', 'Maximum number of participants'],
+ 'Podaj maksymalną liczbę osób, które mogą wziąć udział w wydarzeniu.': ['Indiquez le nombre maximal de personnes pouvant participer à l’événement.', 'Enter the maximum number of people who can attend.'],
+ 'Udogodnienia i usługi dostępności': ['Services d’accessibilité', 'Accessibility services'],
+ 'Wskaż, które udogodnienia są dostępne. W sprawach będących w trakcie ustaleń zaznacz „Do potwierdzenia”.': ['Indiquez les services proposés. Si un point est en cours de discussion, cochez « À confirmer ».', 'Indicate which services are available. If something is still being arranged, select “To be confirmed”.'],
+ 'Udogodnienie': ['Service', 'Service'],
+ 'Tak': ['Oui', 'Yes'],
+ 'Nie': ['Non', 'No'],
+ 'Dostęp dla osób poruszających się na wózkach': ['Accès pour les personnes en fauteuil roulant', 'Wheelchair access'],
+ 'Tłumaczenie na język migowy (LSF)': ['Interprétation en langue des signes française (LSF)', 'Sign language interpretation (LSF)'],
+ 'Audiodeskrypcja': ['Audiodescription', 'Audio description'],
+ 'Napisy lub nadpisy': ['Sous-titres ou surtitres', 'Subtitles or surtitles'],
+ 'Pętla indukcyjna': ['Boucle magnétique', 'Induction loop'],
+ 'Tekst łatwy do czytania (FALC)': ['Facile à lire et à comprendre (FALC)', 'Easy-to-read text (FALC)'],
+ 'Formuła przyjazna sensorycznie': ['Séance adaptée (relax)', 'Relaxed performance'],
+ 'Dodatkowe informacje o dostępności': ['Informations complémentaires sur l’accessibilité', 'Additional accessibility information'],
+ 'Podaj praktyczne informacje o udogodnieniach, np. zasady dostępu, język napisów lub tłumaczenia oraz terminy, w których dana usługa będzie dostępna. Możesz dodać link ze szczegółami.': ['Donnez des informations pratiques, par ex. les modalités d’accès, la langue des sous-titres ou de l’interprétation et les dates où le service est proposé. Vous pouvez ajouter un lien détaillé.', 'Give practical information, e.g. access arrangements, the language of subtitles or interpretation and the dates when the service is available. You can add a link with details.'],
+ 'Wpisz pełny adres, np. https://…': ['Saisissez l’adresse complète, par ex. https://…', 'Enter the full address, e.g. https://…'],
+ 'Jakie materiały przekazać': ['Quels supports transmettre', 'What materials to provide'],
+ 'Przekaż oficjalne materiały dopuszczone do wykorzystania w internecie, druku, na nośnikach reklamy zewnętrznej oraz na ekranach podczas wydarzeń. Prosimy o pliki w najwyższej dostępnej jakości.': ['Transmettez les supports officiels autorisés pour une utilisation en ligne, en impression, en affichage extérieur et sur écrans pendant les événements. Merci de fournir des fichiers de la meilleure qualité disponible.', 'Provide official materials approved for use online, in print, on outdoor advertising and on screens at events. Please send files in the highest available quality.'],
+ 'Zdjęcia.': ['Photos.', 'Photos.'],
+ 'Udostępnij 2–3 poziome propozycje zdjęcia głównego i do 20 zdjęć dodatkowych w formatach poziomym i pionowym. Dołącz autoryzowane portrety prasowe w wysokiej rozdzielczości dla wszystkich wymienionych osób. Prześlij pliki JPEG w najwyższej jakości, o rozdzielczości min. 20 Mpx (ok. 5500 × 3600 px), z wolną przestrzenią do składu, bez filtrów, napisów i znaków wodnych.': ['Proposez 2 ou 3 photos principales au format paysage et jusqu’à 20 photos supplémentaires aux formats paysage et portrait. Joignez des portraits presse autorisés en haute définition de toutes les personnes citées. Envoyez des fichiers JPEG de la meilleure qualité, d’au moins 20 Mpx (env. 5 500 × 3 600 px), avec de l’espace libre pour la mise en page, sans filtres, textes ni filigranes.', 'Provide 2–3 landscape options for the main photo and up to 20 additional photos in landscape and portrait formats. Include authorised high-resolution press portraits of everyone named. Send top-quality JPEG files of at least 20 MP (approx. 5500 × 3600 px), with free space for layout, without filters, text or watermarks.'],
+ 'Wideo.': ['Vidéo.', 'Video.'],
+ 'Prześlij pliki MP4 lub MOV, 25 kl./s, najlepiej w 4K, co najmniej w Full HD (1920 × 1080 px lub odpowiednik w pionie). Dołącz ujęcia poziome (16:9) i pionowe (9:16) bez napisów i grafik. W miarę możliwości udostępnij wersje ze ścieżką dźwiękową i bez niej. Używaj muzyki objętej licencją.': ['Envoyez des fichiers MP4 ou MOV, 25 i/s, idéalement en 4K, au minimum en Full HD (1920 × 1080 px ou équivalent vertical). Joignez des plans horizontaux (16:9) et verticaux (9:16) sans textes ni graphismes. Si possible, fournissez des versions avec et sans bande son. Utilisez uniquement de la musique sous licence.', 'Send MP4 or MOV files at 25 fps, ideally 4K, at least Full HD (1920 × 1080 px or vertical equivalent). Include horizontal (16:9) and vertical (9:16) shots without text or graphics. If possible, provide versions with and without a soundtrack. Use licensed music only.'],
+ 'Logotypy i grafiki.': ['Logos et visuels.', 'Logos and graphics.'],
+ 'Dołącz księgi znaku organizatorów, kolory firmowe (CMYK, Pantone, RGB i HEX), logotypy wektorowe (AI, EPS, SVG lub PDF) i pliki PNG z przezroczystym tłem. Uwzględnij wersje kolorowe, monochromatyczne i w negatywie. Grafiki prześlij w plikach otwartych (AI, PSD lub INDD) albo jako PDF w wysokiej rozdzielczości.': ['Joignez les chartes graphiques des organisateurs, les couleurs (CMJN, Pantone, RVB et HEX), les logos vectoriels (AI, EPS, SVG ou PDF) et des fichiers PNG sur fond transparent, en versions couleur, monochrome et négatif. Envoyez les visuels en fichiers sources (AI, PSD ou INDD) ou en PDF haute définition.', 'Include the organisers’ brand guidelines, brand colours (CMYK, Pantone, RGB and HEX), vector logos (AI, EPS, SVG or PDF) and PNG files with a transparent background, in colour, monochrome and negative versions. Send graphics as open files (AI, PSD or INDD) or as high-resolution PDFs.'],
+ 'Przeciągnij tutaj zdjęcia, logotypy i grafiki': ['Glissez ici vos photos, logos et visuels', 'Drag photos, logos and graphics here'],
+ 'Przy każdym pliku sprawdź rodzaj. Przy zdjęciach i filmach podaj autora i krótko opisz, co przedstawia. Opis wykorzystamy także jako tekst alternatywny dla osób niewidomych. Przy logotypach i grafikach autor nie jest potrzebny.': ['Vérifiez le type de chaque fichier. Pour les photos et les vidéos, indiquez l’auteur et décrivez brièvement ce qu’elles montrent. Cette description servira aussi de texte alternatif pour les personnes aveugles. Pour les logos et visuels, l’auteur n’est pas nécessaire.', 'Check the type of each file. For photos and videos, give the author and briefly describe what they show. We will also use the description as alternative text for blind people. No author is needed for logos and graphics.'],
+ 'Przesłano': ['Envoyé', 'Uploaded'],
+ 'W kolejce': ['En attente', 'Queued'],
+ 'Rodzaj': ['Type', 'Type'],
+ 'Zdjęcie': ['Photo', 'Photo'],
+ 'Wideo': ['Vidéo', 'Video'],
+ 'Logotyp lub grafika': ['Logo ou visuel', 'Logo or graphic'],
+ 'Inny plik': ['Autre fichier', 'Other file'],
+ 'Autor': ['Auteur', 'Author'],
+ 'Co przedstawia': ['Description', 'What it shows'],
+ 'Czego dotyczy': ['Objet', 'What it is'],
+ 'spróbuj ponownie': ['réessayez', 'try again'],
+ 'Ponów': ['Réessayer', 'Retry'],
+ 'np. Jan Kowalski': ['ex. Marie Martin', 'e.g. Jane Smith'],
+ 'np. Zespół na scenie podczas próby': ['ex. La troupe sur scène pendant une répétition', 'e.g. The company on stage during a rehearsal'],
+ 'np. Zwiastun spektaklu, 30 s, poziomy': ['ex. Bande-annonce du spectacle, 30 s, horizontale', 'e.g. Performance trailer, 30 s, landscape'],
+ 'np. Logo organizatora, wersja kolorowa': ['ex. Logo de l’organisateur, version couleur', 'e.g. Organiser’s logo, colour version'],
+ 'np. Program wydarzenia': ['ex. Programme de l’événement', 'e.g. Event programme'],
+ 'Folder z materiałami promocyjnymi': ['Dossier de supports de communication', 'Folder with promotional materials'],
+ 'Wklej link do folderu z wideo i plikami powyżej 50 MB (Dysk Google, WeTransfer, Dropbox). Upewnij się, że zespół Sezonu ma do niego dostęp. Pole nie jest wymagane, jeśli wszystkie pliki zostały dodane powyżej. W nazwie folderu podaj tytuł wydarzenia i nazwę organizatora.': ['Collez le lien vers un dossier contenant les vidéos et les fichiers de plus de 50 Mo (Google Drive, WeTransfer, Dropbox). Vérifiez que l’équipe de la Saison y a accès. Ce champ n’est pas obligatoire si tous les fichiers ont été ajoutés ci-dessus. Indiquez dans le nom du dossier le titre de l’événement et le nom de l’organisateur.', 'Paste a link to a folder with videos and files over 50 MB (Google Drive, WeTransfer, Dropbox). Make sure the Season team can access it. This field is not required if all files were added above. Include the event title and the organiser’s name in the folder name.'],
+ 'Opisy plików z folderu': ['Description des fichiers du dossier', 'Descriptions of files in the folder'],
+ 'Wymagane, jeśli podajesz link do folderu powyżej. Przy każdym pliku podaj nazwę, autora i co przedstawia, każdy plik w osobnym wierszu. Dla wideo dodaj czas trwania, orientację i języki napisów. Możesz też wkleić link do wykazu plików.': ['Obligatoire si vous indiquez un lien vers un dossier. Pour chaque fichier, indiquez sur une ligne le nom, l’auteur et ce qu’il représente. Pour les vidéos, ajoutez la durée, l’orientation et la langue des sous-titres. Vous pouvez aussi coller un lien vers une liste des fichiers.', 'Required if you provide a folder link above. For each file, give its name, author and what it shows, one file per line. For videos, add the duration, orientation and subtitle languages. You can also paste a link to a list of files.'],
+ 'Ograniczenia w wykorzystaniu materiałów': ['Restrictions d’utilisation', 'Usage restrictions'],
+ 'Opisz ograniczenia, jeśli są, np. tylko do materiałów prasowych, do określonej daty, bez kadrowania albo z obowiązkowym podpisem twórcy przedstawionego dzieła.': ['Précisez les restrictions éventuelles, par ex. usage presse uniquement, jusqu’à une date donnée, sans recadrage ou avec mention obligatoire de l’auteur de l’œuvre représentée.', 'Describe any restrictions, e.g. press use only, until a certain date, no cropping, or with a mandatory credit for the creator of the work shown.'],
+ 'Publiczne linki do wideo': ['Liens publics vers des vidéos', 'Public video links'],
+ 'Podaj linki YouTube lub Vimeo do filmów, które można osadzić na stronie wydarzenia.': ['Indiquez des liens YouTube ou Vimeo vers des vidéos pouvant être intégrées à la page de l’événement.', 'Provide YouTube or Vimeo links to videos that can be embedded on the event page.'],
+ '+ Dodaj kolejny link': ['+ Ajouter un lien', '+ Add another link'],
+ 'Wpisz pełny adres, np. https://www.youtube.com/…': ['Saisissez l’adresse complète, par ex. https://www.youtube.com/…', 'Enter the full address, e.g. https://www.youtube.com/…'],
+ 'Strony i media społecznościowe': ['Sites et réseaux sociaux', 'Websites and social media'],
+ 'Strona wydarzenia': ['Page de l’événement', 'Event page'],
+ 'Podaj link do strony wydarzenia u organizatora.': ['Indiquez le lien vers la page de l’événement sur le site de l’organisateur.', 'Enter the link to the event page on the organiser’s website.'],
+ 'Strona organizatora': ['Site de l’organisateur', 'Organiser’s website'],
+ 'Podaj link do głównej strony organizatora.': ['Indiquez le lien vers le site principal de l’organisateur.', 'Enter the link to the organiser’s main website.'],
+ 'Media społecznościowe, wspólne publikacje i inne linki': ['Réseaux sociaux, publications communes et autres liens', 'Social media, joint posts and other links'],
+ 'Podaj stronę organizatora na Facebooku, jego konto na Instagramie, link do wydarzenia na Facebooku oraz pozostałe kanały i istotne linki. Uwzględnij konta na Instagramie współorganizatorów, artystów i kuratorów do oznaczenia. Podaj adres URL i nazwę użytkownika, jeśli dotyczy. Przy każdym koncie na Instagramie lub Facebooku wskaż, czy może współpublikować posty z profilem Sezonu. Dodaj hasztagi i pozostałe oznaczenia do użycia.': ['Indiquez la page Facebook et le compte Instagram de l’organisateur, le lien vers l’événement Facebook ainsi que les autres canaux et liens utiles. Ajoutez les comptes Instagram des coorganisateurs, artistes et commissaires à identifier, avec l’URL et le nom d’utilisateur le cas échéant. Pour chaque compte Instagram ou Facebook, précisez s’il peut publier en collaboration avec le compte de la Saison. Ajoutez les hashtags et identifications à utiliser.', 'Give the organiser’s Facebook page and Instagram account, the Facebook event link and other relevant channels and links. Include the Instagram accounts of co-organisers, artists and curators to tag, with the URL and username where applicable. For each Instagram or Facebook account, state whether it can co-publish posts with the Season’s profile. Add the hashtags and tags to use.'],
+ 'Kontakty i plan komunikacji': ['Contacts et plan de communication', 'Contacts and communication plan'],
+ 'Kontakt do osoby zarządzającej projektem': ['Contact de la personne chargée du projet', 'Project manager contact'],
+ 'Podaj nazwę organizacji, imię i nazwisko, funkcję, telefon i adres e-mail osoby zarządzającej projektem.': ['Indiquez la structure, le prénom et le nom, la fonction, le téléphone et l’adresse e-mail de la personne chargée du projet.', 'Give the organisation, first and last name, position, phone and email of the project manager.'],
+ 'Za komunikację odpowiada ta sama osoba': ['La même personne est chargée de la communication', 'The same person is responsible for communication'],
+ 'Kontakt do osoby odpowiedzialnej za komunikację': ['Contact de la personne chargée de la communication', 'Communication contact'],
+ 'Podaj nazwę organizacji, imię i nazwisko, funkcję, telefon i adres e-mail.': ['Indiquez la structure, le prénom et le nom, la fonction, le téléphone et l’adresse e-mail.', 'Give the organisation, first and last name, position, phone and email.'],
+ 'Plan komunikacji wydarzenia': ['Plan de communication de l’événement', 'Event communication plan'],
+ 'Udostępnij link do planu komunikacji wydarzenia lub wyślij plan na adres polognefrance@iam.pl. Pomoże nam to skoordynować promocję wydarzenia z kampanią Sezonu.': ['Partagez le lien vers le plan de communication de l’événement ou envoyez-le à l’adresse polognefrance@iam.pl. Cela nous aidera à coordonner la promotion de l’événement avec la campagne de la Saison.', 'Share a link to the event communication plan or send it to polognefrance@iam.pl. This helps us coordinate the event’s promotion with the Season campaign.'],
+ 'Dodatkowe uwagi': ['Remarques', 'Additional comments'],
+ 'Dodaj inne informacje istotne dla zespołu Sezonu.': ['Ajoutez toute autre information utile à l’équipe de la Saison.', 'Add any other information relevant to the Season team.'],
+ 'Oświadczenie organizatora': ['Déclaration de l’organisateur', 'Organiser’s declaration'],
+ 'Nota prawna': ['Mentions légales', 'Legal notice'],
+ 'Przekazując materiały za pośrednictwem formularza i zawartych w nim odnośników, oświadczam, że posiadam pełnię praw autorskich lub licencję do przekazanych materiałów, w tym zdjęć, wideo, logotypów i grafik. Posiadam zgody osób widocznych w materiałach na rozpowszechnianie ich wizerunku. Podane opisy i informacje o autorstwie są prawdziwe i kompletne.': ['En transmettant des supports au moyen du formulaire et des liens qu’il contient, je déclare détenir l’intégralité des droits d’auteur ou une licence sur ces supports, notamment les photos, vidéos, logos et visuels. Je dispose de l’autorisation des personnes visibles sur ces supports pour la diffusion de leur image. Les descriptions et les informations sur les auteurs sont exactes et complètes.', 'By providing materials through this form and the links it contains, I declare that I hold full copyright or a licence to the materials provided, including photos, videos, logos and graphics. I have the consent of the people shown in the materials to the distribution of their image. The descriptions and authorship information given are true and complete.'],
+ 'Udzielam Instytutowi Adama Mickiewicza oraz podmiotom działającym na jego zlecenie nieodpłatnej, nieograniczonej terytorialnie licencji na korzystanie z materiałów w ramach projektu Sezon Francja–Polska 2027. Licencja obejmuje internet, media społecznościowe, reklamę zewnętrzną i cyfrową, druk, prasę oraz wydarzenia. Obejmuje także prawo do kadrowania, adaptacji formatów i łączenia materiałów z tekstem i grafiką.': ['J’accorde à l’Institut Adam Mickiewicz et aux entités agissant pour son compte une licence gratuite, sans limitation territoriale, d’utilisation des supports dans le cadre du projet Saison Pologne–France 2027. Cette licence couvre internet, les réseaux sociaux, l’affichage extérieur et numérique, l’impression, la presse et les événements. Elle comprend aussi le droit de recadrer, d’adapter les formats et d’associer les supports à des textes et des éléments graphiques.', 'I grant the Adam Mickiewicz Institute and entities acting on its behalf a free, territorially unlimited licence to use the materials as part of the Saison Pologne–France 2027 project. The licence covers the internet, social media, outdoor and digital advertising, print, press and events. It also includes the right to crop, adapt formats and combine the materials with text and graphics.'],
+ 'Biorę pełną odpowiedzialność za ewentualne roszczenia osób trzecich związane z wykorzystaniem materiałów i zobowiązuję się zwolnić Instytut Adama Mickiewicza z wszelkiej odpowiedzialności z tego tytułu.': ['J’assume l’entière responsabilité de toute réclamation de tiers liée à l’utilisation des supports et m’engage à dégager l’Institut Adam Mickiewicz de toute responsabilité à ce titre.', 'I accept full responsibility for any third-party claims related to the use of the materials and undertake to indemnify the Adam Mickiewicz Institute against any liability in this respect.'],
+ 'Informacja o redakcji treści': ['Information sur la révision des contenus', 'Note on editing of content'],
+ 'Instytut Adama Mickiewicza zastrzega sobie prawo do nieograniczonej modyfikacji treści przekazanych w formularzu. Będą one redagowane i formatowane z uwzględnieniem poszczególnych etapów i kanałów komunikacji oraz ogólnej koncepcji komunikacji Sezonu.': ['L’Institut Adam Mickiewicz se réserve le droit de modifier sans restriction les contenus transmis dans le formulaire. Ils seront révisés et mis en forme en fonction des étapes et des canaux de communication ainsi que du concept général de communication de la Saison.', 'The Adam Mickiewicz Institute reserves the right to modify the content submitted in the form without restriction. It will be edited and formatted according to the stages and channels of communication and the overall communication concept of the Season.'],
+ 'Potwierdzam treść oświadczenia i udzielam opisanej w nim licencji.': ['Je confirme cette déclaration et j’accorde la licence qui y est décrite.', 'I confirm this declaration and grant the licence described in it.'],
+ 'Potwierdź oświadczenie, aby wysłać zgłoszenie.': ['Confirmez la déclaration pour envoyer le formulaire.', 'Confirm the declaration to send your submission.'],
+ 'Dostęp do formularza': ['Accès au formulaire', 'Access to the form'],
+ 'Formularz jest przeznaczony dla organizatorów wydarzeń Sezonu. Wpisz hasło z wiadomości od zespołu Sezonu.': ['Ce formulaire est réservé aux organisateurs d’événements de la Saison. Saisissez le mot de passe indiqué dans le message de l’équipe de la Saison.', 'This form is for organisers of Season events. Enter the password from the Season team’s message.'],
+ 'Hasło': ['Mot de passe', 'Password'],
+ 'Wejdź →': ['Accéder →', 'Enter →'],
+ 'Nie masz hasła? Napisz na adres': ['Vous n’avez pas de mot de passe ? Écrivez à', 'No password? Write to'],
+ 'Wpisz hasło.': ['Saisissez le mot de passe.', 'Enter the password.'],
+ 'Nieprawidłowe hasło.': ['Mot de passe incorrect.', 'Incorrect password.'],
+ 'Dziękujemy!': ['Merci !', 'Thank you!'],
+ 'Zgłoszenie': ['Le formulaire', 'Your submission'],
+ 'Masz kolejne wydarzenie? Kliknij przycisk poniżej. Organizatorzy, strony, media społecznościowe i kontakty uzupełnią się na podstawie tego zgłoszenia. Poprawki prześlij na adres': ['Vous avez un autre événement ? Cliquez sur le bouton ci-dessous. Les organisateurs, sites, réseaux sociaux et contacts seront repris de ce formulaire. Pour toute correction, écrivez à', 'Have another event? Click the button below. Organisers, websites, social media and contacts will be filled in from this submission. Send corrections to'],
+ ', podając numer zgłoszenia.': [', en indiquant le numéro du formulaire.', ', quoting the submission number.'],
+ 'Zgłoś kolejne wydarzenie': ['Renseigner un autre événement', 'Submit another event'],
+ 'Usunięto termin.': ['Date supprimée.', 'Date removed.'],
+ 'Usunięto wiersz.': ['Ligne supprimée.', 'Line removed.'],
+ 'Ukryto listę osób.': ['Liste des personnes masquée.', 'List of people hidden.'],
+ 'Pokazano listę osób.': ['Liste des personnes affichée.', 'List of people shown.'],
+ 'Ukryto pola adresu.': ['Champs d’adresse masqués.', 'Address fields hidden.'],
+ 'Pokazano pola adresu miejsca.': ['Champs d’adresse du lieu affichés.', 'Venue address fields shown.'],
+ 'Dodaj plik ponownie': ['Ajoutez le fichier à nouveau', 'Add the file again'],
+ 'brak połączenia': ['pas de connexion', 'no connection'],
+ 'Poczekaj, aż wszystkie pliki się prześlą.': ['Attendez que tous les fichiers soient envoyés.', 'Wait until all files have uploaded.'],
+ 'Usuń pliki oznaczone na czerwono albo ponów ich przesyłanie.': ['Supprimez les fichiers signalés en rouge ou relancez leur envoi.', 'Remove the files marked in red or retry uploading them.'],
+ 'To potrwa kilka sekund.': ['Cela prendra quelques secondes.', 'This will take a few seconds.'],
+ 'Nieznana akcja.': ['Action inconnue.', 'Unknown action.'],
+ 'Podaj poprawny adres e-mail.': ['Saisissez une adresse e-mail valide.', 'Enter a valid email address.'],
+ 'Nieprawidłowy rozmiar pliku.': ['Taille de fichier non valide.', 'Invalid file size.'],
+ 'Brak dostępu do pliku.': ['Accès au fichier refusé.', 'No access to the file.'],
+ 'Nie znaleziono zapisanego formularza. Sprawdź link z wiadomości e-mail.': ['Formulaire enregistré introuvable. Vérifiez le lien reçu par e-mail.', 'Saved form not found. Check the link in the email.']
+};
+const I18P = [
+ [/^(.+) \*$/, (m) => T(m[1]) + ' *'],
+ [/^(B|b)rakuje (\d+) (pola|pól)$/, (m, f) => { const n = +m[2]; return f ? (n === 1 ? '1 field missing' : n + ' fields missing') : (n === 1 ? '1 champ manquant' : n + ' champs manquants'); }],
+ [/^Sekcja (\d+) z (\d+)$/, (m, f) => (f ? 'Section ' + m[1] + ' of ' : 'Section ' + m[1] + ' sur ') + m[2]],
+ [/^Przesłano (\d+) z (\d+)$/, (m, f) => f ? 'Uploaded ' + m[1] + ' of ' + m[2] : 'Envoyés : ' + m[1] + ' sur ' + m[2]],
+ [/^(\d+) \/ (\d+) znaków$/, (m, f) => m[1] + ' / ' + m[2] + (f ? ' characters' : ' caractères')],
+ [/^(Tryb pokazowy · )?Zapisano (\d{1,2}:\d{2})$/, (m, f) => (m[1] ? (f ? 'Demo mode · ' : 'Mode démo · ') : '') + (f ? 'Saved at ' : 'Enregistré à ') + m[2]],
+ [/^(.+): (Tak|Nie|Do potwierdzenia)$/, (m, f) => T(m[1]) + (f ? ': ' : ' : ') + T(m[2])],
+ [/^Wpisz, czego dotyczy opcja „(.+)”\.$/, (m, f) => f ? 'Specify the “' + T(m[1]) + '” option.' : 'Précisez l’option « ' + T(m[1]) + ' ».'],
+ [/^albo kliknij, aby wybrać pliki · maks\. (\d+) MB każdy · większe pliki, np\. wideo, udostępnij linkiem poniżej$/, (m, f) => f ? 'or click to choose files · max. ' + m[1] + ' MB each · share larger files, such as videos, via a link below' : 'ou cliquez pour choisir des fichiers · ' + m[1] + ' Mo max. par fichier · partagez les fichiers plus lourds, comme les vidéos, via un lien ci-dessous'],
+ [/^Ponad (\d+) MB – usuń i udostępnij linkiem poniżej$/, (m, f) => f ? 'Over ' + m[1] + ' MB – remove it and share it via a link below' : 'Plus de ' + m[1] + ' Mo – supprimez-le et partagez-le via un lien ci-dessous'],
+ [/^Błąd: ([\s\S]*)$/, (m, f) => (f ? 'Error: ' : 'Erreur : ') + T(m[1])],
+ [/^(.+), wpis (\d+)$/, (m, f) => T(m[1]) + (f ? ', line ' : ', ligne ') + m[2]],
+ [/^(.+), link (\d+)$/, (m, f) => T(m[1]) + (f ? ', link ' : ', lien ') + m[2]],
+ [/^Usuń wpis (\d+)$/, (m, f) => (f ? 'Remove line ' : 'Supprimer la ligne ') + m[1]],
+ [/^Usuń link (\d+)$/, (m, f) => (f ? 'Remove link ' : 'Supprimer le lien ') + m[1]],
+ [/^Usuń termin (\d+)$/, (m, f) => (f ? 'Remove date ' : 'Supprimer la date ') + m[1]],
+ [/^Usuń (.+)$/, (m, f) => (f ? 'Remove ' : 'Supprimer ') + m[1]],
+ [/^„([\s\S]*)”$/, (m, f) => f ? '“' + m[1] + '”' : '« ' + m[1] + ' »'],
+ [/^zostało wysłane \(nr (\S+)\)\. Potwierdzenie wysłaliśmy na adres$/, (m, f) => f ? 'has been sent (no. ' + m[1] + '). We have sent a confirmation to' : 'a bien été envoyé (n° ' + m[1] + '). Une confirmation a été envoyée à l’adresse'],
+ [/^Dodano termin (\d+)\.$/, (m, f) => f ? 'Date ' + m[1] + ' added.' : 'Date ' + m[1] + ' ajoutée.'],
+ [/^Usunięto termin\. Pozostało (\d+)\.$/, (m, f) => f ? 'Date removed. ' + m[1] + ' left.' : 'Date supprimée. Il en reste ' + m[1] + '.'],
+ [/^Dodano wiersz (\d+) z (\d+)\.$/, (m, f) => f ? 'Line ' + m[1] + ' of ' + m[2] + ' added.' : 'Ligne ' + m[1] + ' sur ' + m[2] + ' ajoutée.'],
+ [/^Dodano wiersz (\d+)\.$/, (m, f) => f ? 'Line ' + m[1] + ' added.' : 'Ligne ' + m[1] + ' ajoutée.'],
+ [/^Usunięto wiersz\. Pozostało (\d+)\.$/, (m, f) => f ? 'Line removed. ' + m[1] + ' left.' : 'Ligne supprimée. Il en reste ' + m[1] + '.'],
+ [/^Pominięto pliki: (\d+) \(puste lub ponad limit (\d+) plików\)\.$/, (m, f) => f ? 'Files skipped: ' + m[1] + ' (empty or over the limit of ' + m[2] + ' files).' : 'Fichiers ignorés : ' + m[1] + ' (vides ou au-delà de la limite de ' + m[2] + ' fichiers).'],
+ [/^Przesłano plik (.+)\.$/, (m, f) => (f ? 'File uploaded: ' : 'Fichier envoyé : ') + m[1] + '.'],
+ [/^Błąd przesyłania pliku (.+?): ([\s\S]+)\.$/, (m, f) => (f ? 'Upload error for ' + m[1] + ': ' : 'Erreur d’envoi du fichier ' + m[1] + ' : ') + T(m[2]) + '.'],
+ [/^serwer odrzucił plik \((\d+)\)$/, (m, f) => (f ? 'the server rejected the file (' : 'le serveur a refusé le fichier (') + m[1] + ')'],
+ [/^Wysłaliśmy link do dokończenia formularza na adres (.+)\. Przesłane pliki są zapisane\.$/, (m, f) => f ? 'We have sent a link to finish the form to ' + m[1] + '. Uploaded files are saved.' : 'Nous avons envoyé un lien pour terminer le formulaire à l’adresse ' + m[1] + '. Les fichiers envoyés sont enregistrés.'],
+ [/^Nie udało się zapisać: ([\s\S]+)$/, (m, f) => (f ? 'Could not save: ' : 'Échec de l’enregistrement : ') + T(m[1])],
+ [/^Nie udało się wysłać zgłoszenia: ([\s\S]+?) Odpowiedzi są zapisane, spróbuj ponownie za chwilę\.$/, (m, f) => f ? 'Could not send: ' + T(m[1]) + ' Your answers are saved, please try again shortly.' : 'Échec de l’envoi : ' + T(m[1]) + ' Vos réponses sont enregistrées, réessayez dans un instant.'],
+ [/^Wczytaliśmy zapisany formularz nr (\S+)\.$/, (m, f) => f ? 'Saved form no. ' + m[1] + ' loaded.' : 'Formulaire enregistré n° ' + m[1] + ' chargé.'],
+ [/^Nie udało się rozpocząć przesyłania \((\d+)\)\.$/, (m, f) => (f ? 'Could not start the upload (' : 'Impossible de démarrer l’envoi (') + m[1] + ').'],
+ [/^To zgłoszenie zostało już wysłane\. Poprawki prześlij na adres (.+)\.$/, (m, f) => f ? 'This submission has already been sent. Send corrections to ' + m[1] + '.' : 'Ce formulaire a déjà été envoyé. Pour toute correction, écrivez à ' + m[1] + '.']
+];
+function T(s) {
+  if (LANG === 'pl' || s == null) return s;
+  const str = String(s), m = str.match(/^(\s*)([\s\S]*?)(\s*)$/), k = m[2].replace(/\u00a0/g, ' ').replace(/\s+/g, ' ');
+  if (!k) return str;
+  const f = LANG === 'en' ? 1 : 0;
+  let o = I18[k] ? I18[k][f] : null;
+  if (o == null) for (const [re, fn] of I18P) { const x = k.match(re); if (x) { o = fn(x, f); break; } }
+  if (o == null) return str;
+  if (!f) o = o.replace(/ ([:;!?»])/g, '\u00a0$1').replace(/« /g, '«\u00a0');
+  return m[1] + o + m[3];
+}
+const I18D = new WeakSet();
+function i18n(root) {
+  if (LANG === 'pl' || !root) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentNode && n.parentNode.closest('textarea,script,style,[contenteditable],.lang') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  let n; while ((n = w.nextNode())) { if (I18D.has(n)) continue; I18D.add(n); const t = T(n.data); if (t !== n.data) n.data = t; }
+  root.querySelectorAll('[placeholder],[aria-label],[title],img[alt],datalist option').forEach(el => {
+    if (I18D.has(el) || el.closest('.lang')) return; I18D.add(el);
+    ['placeholder', 'aria-label', 'title', 'alt'].concat(el.tagName === 'OPTION' ? ['value'] : []).forEach(a => { const v = el.getAttribute(a); if (v) { const t = T(v); if (t !== v) el.setAttribute(a, t); } });
+  });
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === LANG ? 'true' : 'false'));
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-lang]'); if (!b || b.dataset.lang === LANG) return;
+  if (files.some(f => f.status === 'queue' || f.status === 'up')) { toast(T('Poczekaj, aż wszystkie pliki się prześlą.'), 1); return; }
+  try { localStorage.setItem('sezon2027_lang', b.dataset.lang); sessionStorage.setItem('sezon2027_cur', String(cur)); } catch (e2) {}
+  const u = new URL(location.href); u.searchParams.delete('lang'); location.replace(u.toString());
+});
+
 const KONFIG = {
   apiUrl: 'https://script.google.com/macros/s/AKfycbw8CidrLcO-rhhmw9O2m0Cx6h_cvF7TXqPO__Se-Mq85ou6oroBkpGsg5HnTmmZNfPo/exec', // adres Apps Script konta Sezonu
   logoUrl: 'logo.png',   // plik logo w repozytorium; zmiana logo = wgranie nowego pliku logo.png
-  emailKontakt: 'sezon2027@iam.pl', // adres pokazywany partnerom
+  emailKontakt: 'polognefrance@iam.pl', // adres pokazywany partnerom
   maxMB: 50, maxPlikow: 40
 };
 
 const DYS = ['Architektura, urbanistyka i krajobraz','Praktyki artystyczne i społeczności','Muzyka klasyczna','Muzyka współczesna','Dziedzictwo kulturowe','Kultura, gospodarka, innowacje i technologie','Debata','Design, moda i rzemiosło','Edukacja','Film i sztuki audiowizualne (w tym sztuka wideo)','Gastronomia','Szkolnictwo wyższe i kultura naukowa','Literatura i komiks','Sztuki performatywne (teatr, taniec, cyrk i lalkarstwo)','Fotografia','Muzyka popularna i jazz','Sport','Gry wideo i twórczość cyfrowa (w tym rzeczywistość wirtualna)','Sztuki wizualne (w tym sztuka współczesna)'];
 const FOR = ['Targi sztuki','Współpraca lub wymiana artystyczna','Rezydencja artystyczna','Koncert','Trasa koncertowa','Debata','Wystawa','Festiwal','Instalacja','Wykład','Spektakl','Publikacja','Projekcja filmowa','Prezentacja','Spotkanie','Warsztaty'];
 const WST = ['Bilety płatne','Wstęp wolny','Wstęp wolny po rejestracji','Wstęp za zaproszeniem','Do potwierdzenia','Inny'];
-const DOS = { rows: ['Dostęp dla osób poruszających się na wózkach','Tłumaczenie na polski język migowy (PJM)','Audiodeskrypcja','Napisy lub nadpisy','Pętla indukcyjna','Tekst łatwy do czytania (ETR)','Formuła przyjazna sensorycznie'], cols: ['Tak','Nie','Do potwierdzenia'] };
+const DOS = { rows: ['Dostęp dla osób poruszających się na wózkach','Tłumaczenie na język migowy (LSF)','Audiodeskrypcja','Napisy lub nadpisy','Pętla indukcyjna','Tekst łatwy do czytania (FALC)','Formuła przyjazna sensorycznie'], cols: ['Tak','Nie','Do potwierdzenia'] };
 
 const MATERIALY = [
  'Przekaż oficjalne materiały dopuszczone do wykorzystania w internecie, druku, na nośnikach reklamy zewnętrznej oraz na ekranach podczas wydarzeń. Prosimy o pliki w najwyższej dostępnej jakości.',
@@ -269,7 +635,7 @@ const MATERIALY = [
 const NOTA = [
  'Przekazując materiały za pośrednictwem formularza i zawartych w nim odnośników, oświadczam, że posiadam pełnię praw autorskich lub licencję do przekazanych materiałów, w tym zdjęć, wideo, logotypów i grafik. Posiadam zgody osób widocznych w materiałach na rozpowszechnianie ich wizerunku. Podane opisy i informacje o autorstwie są prawdziwe i kompletne.',
  'Udzielam Instytutowi Adama Mickiewicza oraz podmiotom działającym na jego zlecenie nieodpłatnej, nieograniczonej terytorialnie licencji na korzystanie z materiałów w ramach projektu Sezon Francja–Polska 2027. Licencja obejmuje internet, media społecznościowe, reklamę zewnętrzną i cyfrową, druk, prasę oraz wydarzenia. Obejmuje także prawo do kadrowania, adaptacji formatów i łączenia materiałów z tekstem i grafiką.',
- 'Biorę pełną odpowiedzialność za ewentualne roszczenia osób trzecich związane z wykorzystaniem materiałów i zobowiązuję się zwolnić Institut français z wszelkiej odpowiedzialności z tego tytułu.',
+ 'Biorę pełną odpowiedzialność za ewentualne roszczenia osób trzecich związane z wykorzystaniem materiałów i zobowiązuję się zwolnić Instytut Adama Mickiewicza z wszelkiej odpowiedzialności z tego tytułu.',
  '<b>Informacja o redakcji treści</b><br>Instytut Adama Mickiewicza zastrzega sobie prawo do nieograniczonej modyfikacji treści przekazanych w formularzu. Będą one redagowane i formatowane z uwzględnieniem poszczególnych etapów i kanałów komunikacji oraz ogólnej koncepcji komunikacji Sezonu.'
 ];
 
@@ -301,7 +667,7 @@ const SEK = [
   ['T','Ulica i numer',1,'Podaj oficjalny adres miejsca.'],
   ['T','Kod pocztowy',1,'Użyj formatu przyjętego w danym kraju, np. 75001 we Francji.',0,0,'h'],
   ['T','Miejscowość',1,'',0,0,'h'],
-  ['T','Kraj',1,'Podaj nazwę kraju po polsku.'],
+  ['T','Kraj',1,'Podaj nazwę kraju.'],
   ['P','Pokaz przedpremierowy, otwarcie i zamknięcie',0,'Wskaż, czy planowany jest pokaz przedpremierowy, wernisaż, uroczyste otwarcie lub finisaż. Podaj rodzaj, datę i godzinę każdego punktu oraz miejsce, jeśli jest inne niż główne miejsce wydarzenia.',0,1],
   ['M','Dodatkowe terminy i miejsca',0,'Dodaj osobno każdy kolejny termin lub miejsce. Jeśli wydarzenie odbywa się w tym samym miejscu co główne, wystarczy data i godzina.']
  ]},
@@ -328,7 +694,7 @@ const SEK = [
   ['S','Kontakty i plan komunikacji'],
   ['P','Kontakt do osoby zarządzającej projektem',1,'Podaj nazwę organizacji, imię i nazwisko, funkcję, telefon i adres e-mail osoby zarządzającej projektem.'],
   ['P','Kontakt do osoby odpowiedzialnej za komunikację',1,'Podaj nazwę organizacji, imię i nazwisko, funkcję, telefon i adres e-mail.'],
-  ['T','Plan komunikacji wydarzenia',0,'Udostępnij link do planu komunikacji wydarzenia lub wyślij plan na adres sezon@mediocre.agency. Pomoże nam to skoordynować promocję wydarzenia z kampanią Sezonu.'],
+  ['T','Plan komunikacji wydarzenia',0,'Udostępnij link do planu komunikacji wydarzenia lub wyślij plan na adres polognefrance@iam.pl. Pomoże nam to skoordynować promocję wydarzenia z kampanią Sezonu.'],
   ['P','Dodatkowe uwagi',0,'Dodaj inne informacje istotne dla zespołu Sezonu.'],
   ['S','Oświadczenie organizatora'],
   ['C','Potwierdzenie oświadczenia',1,'','Potwierdzam treść oświadczenia i udzielam opisanej w nim licencji.']
@@ -363,7 +729,7 @@ async function api(a, data) {
     if (a === 'load') return null;
     return { ok: true };
   }
-  const r = await fetch(KONFIG.apiUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ a: a, h: pass }, data)) });
+  const r = await fetch(KONFIG.apiUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(Object.assign({ a: a, h: pass, lang: LANG }, data)) });
   const j = await r.json();
   if (j.code === 'haslo') { pass = ''; try { localStorage.removeItem('sezon2027_formularz_haslo'); } catch (e) {} }
   if (j.error) throw new Error(j.error);
@@ -405,7 +771,7 @@ function value(s, i) {
 const ROLE = ['Organizator', 'Współorganizator', 'Partner', 'Partner medialny', 'Sponsor', 'Inna rola'];
 const orgRows = v => Array.isArray(v) && v.length ? v.map(r => r && typeof r === 'object' ? { n: r.n || '', c: r.c || '', r: (r.r || []).slice(), o: r.o || '' } : { n: String(r || ''), c: '', r: [], o: '' })
   : typeof v === 'string' && v.trim() ? v.split('\n').filter(x => x.trim()).map(x => ({ n: x, c: '', r: [], o: '' }))
-  : [{ n: '', c: 'Polska', r: ['Organizator'], o: '' }, { n: '', c: 'Francja', r: ['Partner'], o: '' }];
+  : [{ n: '', c: T('Polska'), r: ['Organizator'], o: '' }, { n: '', c: T('Francja'), r: ['Partner'], o: '' }];
 const orgBad = r => r.n.trim() && (!r.r.length || (r.r.indexOf('Inna rola') >= 0 && !r.o.trim()));
 function orgRow(id, r, k, n, show) {
   const a = ' data-f="' + id + '" data-oi="' + k + '"';
@@ -426,7 +792,7 @@ function orgRow(id, r, k, n, show) {
 const IDX = {}; SEK.forEach((S, s) => S.p.forEach((p, i) => { IDX[p[1]] = fid(s, i); }));
 const COMM = 'Kontakt do osoby odpowiedzialnej za komunikację';
 const MORE = ['Biogramy osób uczestniczących', 'Dodatkowe treści do publikacji'];
-const DEF = { 'Kraj': 'Francja' };
+const DEF = { get 'Kraj'() { return T('Francja'); } };
 const ADD = { 'Główna dyscyplina': { k: 'x_dys', t: '+ Dodaj drugą dyscyplinę', to: 'Dodatkowa dyscyplina' }, 'Główny format wydarzenia': { k: 'x_for', t: '+ Dodaj drugi format', to: 'Dodatkowy format wydarzenia' } };
 const has = l => { const v = vals[IDX[l]]; return v != null && String(v).trim() !== ''; };
 const wst = () => vals[IDX['Sposób wstępu']] || '';
@@ -450,11 +816,11 @@ const sameHtml = () => '<div class="field"><label class="check"><input type="che
 document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.more')) { vals.x_more = e.target.open; persist(); } }, true);
 if (!has('Dodatkowa dyscyplina')) vals.x_dys = 0;
 if (!has('Dodatkowy format wydarzenia')) vals.x_for = 0;
-const mBlank = () => ({ od: '', dz: '', go: '', gz: '', same: true, n: '', u: '', k: '', m: '', c: 'Francja' });
+const mBlank = () => ({ od: '', dz: '', go: '', gz: '', same: true, n: '', u: '', k: '', m: '', c: T('Francja') });
 const mRows = v => Array.isArray(v) ? v.map(r => Object.assign(mBlank(), r)) : (typeof v === 'string' && v.trim() ? v.split('\n').filter(x => x.trim()).map(x => Object.assign(mBlank(), { same: false, n: x, c: '' })) : []);
 const mUsed = r => ['od', 'dz', 'go', 'gz', 'n', 'u', 'k', 'm'].some(x => String(r[x] || '').trim());
 const mMiss = r => ['od', 'go'].concat(r.same ? [] : ['n', 'u', 'm', 'c']).filter(x => !String(r[x] || '').trim());
-function missN(s) { return missingOn(s).reduce((n, i) => { const p = SEK[s].p[i]; return n + (p[0] === 'M' ? Math.max(1, mRows(vals[fid(s, i)]).reduce((a, r) => a + mMiss(r).length, 0)) : 1); }, 0); }
+function missN(s) { return missingOn(s).reduce((n, i) => { const p = SEK[s].p[i]; if (!p) return n + fmMissing().length; return n + (p[0] === 'M' ? Math.max(1, mRows(vals[fid(s, i)]).reduce((a, r) => a + mMiss(r).length, 0)) : 1); }, 0); }
 const dPL = d => d ? d.split('-').reverse().join('.') : '';
 const mText = r => [dPL(r.od) + (r.dz ? '–' + dPL(r.dz) : ''), r.go ? r.go + (r.gz ? '–' + r.gz : '') : '', r.same ? 'główne miejsce wydarzenia' : [r.n, r.u, [r.k, r.m].filter(Boolean).join(' '), r.c].filter(x => String(x || '').trim()).join(', ')].filter(Boolean).join(', ');
 function mRow(id, r, k, show) {
@@ -525,7 +891,7 @@ function fieldHtml(s, i) {
     case 'M': { const rows = mRows(v); ctl = '<div class="orgs">' + rows.map((r, k) => mRow(id, r, k, tried[s])).join('') + '<datalist id="kraje-m"><option value="Francja"><option value="Polska"></datalist><button type="button" class="mini" data-madd="' + id + '">+ Dodaj ' + (rows.length ? 'kolejny termin lub miejsce' : 'termin lub miejsce') + '</button></div>'; msg = 'Uzupełnij datę i godzinę rozpoczęcia oraz miejsce w każdym dodatkowym terminie.'; break; }
     case 'Q': { const ph = (p[4] && p[4].ph) || QPH, none = p[4] && p[4].none && vals[id + '_none']; const arr = arrOf(v).length ? arrOf(v) : ['', '']; ctl = '<div class="rep"><span class="sr" id="' + id + '_kh">Enter dodaje kolejny wiersz. Backspace w pustym wierszu go usuwa.</span>' + arr.map((x, k) => '<div class="rrow"><input type="text" data-q="1" data-f="' + id + '" data-ri="' + k + '"' + (k === 0 ? ' id="' + id + '"' : '') + ' aria-describedby="' + (k === 0 && p[3] ? id + '_h ' : '') + id + '_kh"' + ' aria-label="' + esc(p[1]) + ', wpis ' + (k + 1) + '"' + (ph[k] && !x ? ' placeholder="' + ph[k] + '"' : '') + ' value="' + esc(x) + '">' + (arr.length > 1 ? '<button type="button" class="x" data-rdel="' + id + '" data-ri="' + k + '" aria-label="Usuń wpis ' + (k + 1) + '">×</button>' : '') + '</div>').join('') + '<button type="button" class="mini" data-radd="' + id + '" data-min="2">' + ((p[4] && p[4].add) || '+ Dodaj kolejny podmiot') + '</button></div>'; if (none) ctl = ''; if (p[4] && p[4].none) ctl += '<label class="check" style="margin-top:6px;font-weight:500"><input type="checkbox" data-qnone="1" data-f="' + id + '_none"' + (none ? ' checked' : '') + '><span>' + esc(p[4].none) + '</span></label>'; break; }
     case 'R': { const arr = arrOf(v).length ? arrOf(v) : ['']; ctl = '<div class="rep">' + arr.map((x, k) => '<div class="rrow"><input type="url" data-f="' + id + '" data-ri="' + k + '"' + (k === 0 ? ' id="' + id + '"' + (p[3] ? ' aria-describedby="' + id + '_h"' : '') : '') + ' aria-label="' + esc(p[1]) + ', link ' + (k + 1) + '" placeholder="https://www.youtube.com/…" value="' + esc(x) + '">' + (arr.length > 1 || x ? '<button type="button" class="x" data-rdel="' + id + '" data-ri="' + k + '" aria-label="Usuń link ' + (k + 1) + '">×</button>' : '') + '</div>').join('') + '<button type="button" class="mini" data-radd="' + id + '">+ Dodaj kolejny link</button></div>'; msg = 'Wpisz pełny adres, np. https://www.youtube.com/…'; break; }
-    case 'L': ctl = '<select ' + attrs + '><option value="">Wybierz…</option>' + p[4].map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>'; break;
+    case 'L': ctl = '<select ' + attrs + '><option value="">Wybierz…</option>' + p[4].map(o => '<option value="' + esc(o) + '"' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select>'; break;
     case 'G': ctl = '<table class="grid" aria-labelledby="' + id + '_l"><thead><tr><th><span class="sr">Udogodnienie</span></th>' + p[4].cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' + p[4].rows.map((r, k) => '<tr><td>' + esc(r) + '</td>' + p[4].cols.map((c, j) => '<td><input type="radio" name="' + id + '_' + k + '" data-f="' + id + '" data-r="' + k + '" value="' + j + '" aria-label="' + esc(r + ': ' + c) + '"' + (v && v[k] === j ? ' checked' : '') + '></td>').join('') + '</tr>').join('') + '</tbody></table>'; break;
     case 'C': return (SEK[s].legal ? '<div class="legal" tabindex="0" aria-label="Nota prawna">' + NOTA.map(t => '<p>' + t + '</p>').join('') + '</div>' : '') + '<div class="field' + (bad ? ' err' : '') + '"><label class="check"><input type="checkbox" ' + attrs + (v ? ' checked' : '') + '><span>' + esc(p[4]) + ' <span class="star">*</span></span></label><span class="msg" id="' + id + '_e">Potwierdź oświadczenie, aby wysłać zgłoszenie.</span></div>';
   }
@@ -580,14 +946,14 @@ const BASE_TITLE = document.title;
 const smooth = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
 function say(m) { const el = $('sr'); if (!el) return; el.textContent = ''; setTimeout(() => { el.textContent = m; }, 60); }
 function render() {
-  document.title = (cur === 0 ? 'Wstęp' : SEK[cur - 1].t + ' (' + cur + ' z ' + SEK.length + ')') + ' – ' + BASE_TITLE;
+  document.title = (cur === 0 ? T('Wstęp') : T(SEK[cur - 1].t) + ' (' + cur + ' ' + T('z') + ' ' + SEK.length + ')') + ' – ' + T(BASE_TITLE);
   renderSteps();
   let h = '';
   if (cur === 0) {
     h = '<div class="card"><div class="intro">'
       + '<div><h3>Cel formularza</h3><p>Prosimy osoby odpowiedzialne za organizację i komunikację wydarzeń Sezonu Francja–Polska 2027 o przekazanie informacji potrzebnych do zaplanowania promocji i przedstawienia wydarzenia publiczności.</p></div>'
       + '<div><h3>Gdzie wykorzystamy informacje</h3><p>Na podstawie odpowiedzi przygotujemy oficjalny program i informator Sezonu, treści na stronę internetową i do mediów społecznościowych, materiały prasowe oraz pozostałe materiały promocyjne.</p></div>'
-      + '<div><h3>Jak przesłać zgłoszenie</h3><p>Wypełnij formularz po polsku, osobno dla każdego wydarzenia. Dodatkowe terminy i miejsca tego samego wydarzenia wpisz w jednym zgłoszeniu. Zachowaj oficjalną pisownię nazw własnych i adresów. W razie problemów technicznych wypełnij plik Excel z pytaniami, dołączony do wiadomości z linkiem do formularza, i odeślij go na adres ' + mailLink() + '.</p></div>'
+      + '<div><h3>Jak przesłać zgłoszenie</h3><p>Wypełnij formularz po francusku, osobno dla każdego wydarzenia. Dodatkowe terminy i miejsca tego samego wydarzenia wpisz w jednym zgłoszeniu. Zachowaj oficjalną pisownię nazw własnych i adresów. W razie problemów technicznych wypełnij plik Excel z pytaniami, dołączony do wiadomości z linkiem do formularza, i odeślij go na adres ' + mailLink() + '.</p></div>'
       + '<div><h3>Jak udostępnić pliki</h3><p>Zdjęcia, logotypy i grafiki dodasz w sekcji „Materiały promocyjne”. Wideo i pliki powyżej 50 MB udostępnij tam linkiem do folderu, np. na Dysku Google, w WeTransfer albo Dropboxie. W nazwach zdjęć i filmów uwzględnij osoby lub obiekty przedstawione w materiale oraz autorstwo.</p></div>'
       + '</div></div>'
       + '<div class="card"><div class="field' + (tried.email && emailBad() ? ' err' : '') + '"><label class="lbl" for="email">Twój adres e-mail <span class="star" aria-hidden="true">*</span></label><span class="help" id="email_h">Wyślemy na niego potwierdzenie zgłoszenia i, jeśli zechcesz, link do dokończenia formularza.</span><input type="email" id="email" data-f="email" aria-required="true" aria-describedby="email_h" value="' + esc(vals.email) + '" autocomplete="email"><span class="msg" role="alert">Wpisz poprawny adres e-mail.</span></div>'
@@ -853,7 +1219,7 @@ async function send() {
 }
 function done(nr, tytul) {
   $('steps').innerHTML = ''; $('bar').style.display = 'none';
-  document.title = 'Zgłoszenie wysłane – ' + BASE_TITLE; $('page').innerHTML = '<div class="card"><div class="done-ic">✓</div><h2 tabindex="-1">Dziękujemy!</h2><p style="font-size:19px;margin:16px 0 0">Zgłoszenie <b>„' + esc(tytul) + '”</b> zostało wysłane (nr ' + esc(nr) + '). Potwierdzenie wysłaliśmy na adres <b>' + esc(vals.email) + '</b>.</p><p style="margin:12px 0 0">Masz kolejne wydarzenie? Kliknij przycisk poniżej. Organizatorzy, strony, media społecznościowe i kontakty uzupełnią się na podstawie tego zgłoszenia. Poprawki prześlij na adres ' + mailLink() + ', podając numer zgłoszenia.</p><div style="margin-top:28px"><button class="btn sec" id="again">Zgłoś kolejne wydarzenie</button></div></div>';
+  document.title = T('Zgłoszenie wysłane') + ' – ' + T(BASE_TITLE); $('page').innerHTML = '<div class="card"><div class="done-ic">✓</div><h2 tabindex="-1">Dziękujemy!</h2><p style="font-size:19px;margin:16px 0 0">Zgłoszenie <b>„' + esc(tytul) + '”</b> zostało wysłane (nr ' + esc(nr) + '). Potwierdzenie wysłaliśmy na adres <b>' + esc(vals.email) + '</b>.</p><p style="margin:12px 0 0">Masz kolejne wydarzenie? Kliknij przycisk poniżej. Organizatorzy, strony, media społecznościowe i kontakty uzupełnią się na podstawie tego zgłoszenia. Poprawki prześlij na adres ' + mailLink() + ', podając numer zgłoszenia.</p><div style="margin-top:28px"><button class="btn sec" id="again">Zgłoś kolejne wydarzenie</button></div></div>';
   $('page').querySelector('h2').focus();
   $('again').onclick = () => { const nv = { email: vals.email, x_same: vals.x_same }; ['Organizatorzy, współorganizatorzy i partnerzy', 'Strona organizatora', 'Media społecznościowe, wspólne publikacje i inne linki', 'Kontakt do osoby zarządzającej projektem', COMM].forEach(l => { if (vals[IDX[l]] != null) nv[IDX[l]] = vals[IDX[l]]; }); vals = nv; files = []; token = null; tried = {}; visited = { 0: true }; persist(); $('bar').style.display = ''; go(1); };
   window.scrollTo({ top: 0 });
@@ -879,8 +1245,8 @@ function sieroty(root) {
   while ((n = w.nextNode())) { const t = n.nodeValue.replace(re, '$1$2\u00A0').replace(re, '$1$2\u00A0'); if (t !== n.nodeValue) n.nodeValue = t; }
 }
 SEK.forEach((S, s) => S.p.forEach((p, i) => { const k = fid(s, i); if (p[0] === 'P' && Array.isArray(vals[k])) vals[k] = orgRows(vals[k]).filter(r => r.n.trim()).map(r => r.n.trim() + (r.c.trim() ? ' (' + r.c.trim() + ')' : '') + (r.r.length ? ' – ' + r.r.join(', ') : '')).join('\n'); }));
-sieroty(document.body);
-new MutationObserver(() => sieroty(document.body)).observe(document.body, { childList: true, subtree: true });
+i18n(document.body); sieroty(document.body);
+new MutationObserver(() => { i18n(document.body); sieroty(document.body); }).observe(document.body, { childList: true, subtree: true });
 async function init() {
   if (!DEMO && !pass) { try { await api('check', {}); } catch (e) { gate(); return; } }
   const sz = new URLSearchParams(location.search).get('szkic');
@@ -893,7 +1259,7 @@ async function init() {
   }
   render();
 }
-init();
+init().then(() => { let rc = 0; try { rc = +(sessionStorage.getItem('sezon2027_cur') || 0); sessionStorage.removeItem('sezon2027_cur'); } catch (e) {} if (rc > 0 && cur === 0 && !emailBad() && $('steps').innerHTML) go(rc); });
 </script>
 </body>
 </html>
